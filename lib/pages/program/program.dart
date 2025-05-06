@@ -15,7 +15,7 @@ class _ProgramPageState extends State<ProgramPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyColors.blue_color,
-        title: Text('Fitapp', style:
+        title: Text('Программа', style:
         TextStyle(
           color: Colors.white,
           fontSize: 16,

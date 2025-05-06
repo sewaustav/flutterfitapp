@@ -26,7 +26,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyColors.blue_color,
-        title: Text('Fitapp', style:
+        title: Text('Список упражнений', style:
         TextStyle(
           color: Colors.white,
           fontSize: 16,
