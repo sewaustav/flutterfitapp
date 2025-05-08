@@ -19,6 +19,8 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.0
   build_runner: ^2.4.6
+  flutter_secure_storage: ^8.0.0
+  logger: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -26,13 +28,11 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
   flutter_svg: ^2.1.0
-  build_runner: ^2.4.6
+
 
 
 flutter:
-
   uses-material-design: true
-
   assets:
-     - assets/images/
+    - assets/images/
 

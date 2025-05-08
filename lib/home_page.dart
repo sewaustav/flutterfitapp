@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/design/images.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,47 +18,26 @@ class HomePage extends StatelessWidget {
           )),
           backgroundColor: MyColors.blue_color,
       ),
-      body: Center(
+      body: SingleChildScrollView(child: Center(
           child: Container(
-            margin: EdgeInsets.all(20),
+
             child: Column(
 
             children: [
-              Container(
-                margin: EdgeInsets.all(15),
-                child: Text("Welcome guest!", style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-              ),),),
-              TextButton(
-                  onPressed: () => context.go('programs'),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    backgroundColor: MyColors.blue_color,
-                  ),
-                  child: Text("Let's train!", style: TextStyle(
-                    color: Colors.white,
+              Image.asset('assets/images/main.png', width: MediaQuery.of(context).size.width, fit: BoxFit.cover,),
 
-                  ),),),
-              Container(
-                margin: EdgeInsets.all(32),
-                child: Text("Your results", style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 40,
-                ),),
-              ),
+
 
             ],
           ),
         ),
-      ),
+      ),),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           children: [
             Spacer(),
             IconButton(
-              onPressed: () => context.go('/exercise'),
+              onPressed: () => context.go('/programs'),
               icon: dumbell,
             ),
             Spacer(),
@@ -65,12 +47,12 @@ class HomePage extends StatelessWidget {
             ),
             Spacer(),
             IconButton(
-              onPressed: () => context.go('/programs'),
+              onPressed: () => context.go('/profile'),
               icon: profile,
             ),
             Spacer(),
             IconButton(
-              onPressed: () => context.go('/profile'),
+              onPressed: () => context.go('/history'),
               icon: history,
             ),
             Spacer(),

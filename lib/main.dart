@@ -51,7 +51,7 @@ final _router = GoRouter(
           builder: (context, state) => const OtherPage(),
         ),
         GoRoute(
-          path: 'exercises',
+          path: 'history',
           builder: (context, state) => const HistoryPage(),
         ),
       ],

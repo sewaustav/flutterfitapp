@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutterfitapp/pages/program_app/list_exercise.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../design/images.dart';
 import 'exercise_model.dart';
 
 class ExercisePage extends StatefulWidget {
@@ -93,15 +94,43 @@ class _ExercisePageState extends State<ExercisePage> {
         itemBuilder: (context, index) {
           final exercise = exercises[index];
           return ListTile(
-            title: Text(exercise.name),
+            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            leading: dumbell,
+            title: Text(
+              exercise.name,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Основная группа: ${exercise.muscleGroup}'),
-                if (exercise.secondGroup != null)
-                  Text('Доп. группа: ${exercise.secondGroup}'),
-                if (exercise.rating != null)
-                  Text('Рейтинг: ${exercise.rating}'),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.emoji_people, size: 16, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Основная группа: ${exercise.muscleGroup}'),
+                  ],
+                ),
+                if (exercise.secondGroup != null) ...[
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.people_outline, size: 16, color: Colors.grey),
+                      SizedBox(width: 8),
+                      Text('Доп. группа: ${exercise.secondGroup}'),
+                    ],
+                  ),
+                ],
+                if (exercise.rating != null) ...[
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.star, size: 16, color: Colors.amber),
+                      SizedBox(width: 8),
+                      Text('Рейтинг: ${exercise.rating}'),
+                    ],
+                  ),
+                ],
               ],
             ),
           );
