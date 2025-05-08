@@ -9,6 +9,7 @@ import 'package:flutterfitapp/pages/other/other.dart';
 import 'package:flutterfitapp/pages/profile/profile.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'home_page.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 
 
@@ -28,31 +29,43 @@ final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomePage(),
+      builder: (context, state) => kIsWeb ? const WebMobileWrapper(child: HomePage()) : const HomePage(),
       routes: [
         GoRoute(
           path: 'exercise',
-          builder: (context, state) => const ExerciseListPage(),
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: ExerciseListPage())
+              : const ExerciseListPage(),
         ),
         GoRoute(
           path: 'exercises',
-          builder: (context, state) => const ExercisePage(),
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: ExercisePage())
+              : const ExercisePage(),
         ),
         GoRoute(
           path: 'programs',
-          builder: (context, state) => const ProgramPage(),
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: ProgramPage())
+              : const ProgramPage(),
         ),
         GoRoute(
           path: 'profile',
-          builder: (context, state) => const ProfilePage(),
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: ProfilePage())
+              : const ProfilePage(),
         ),
         GoRoute(
           path: 'other',
-          builder: (context, state) => const OtherPage(),
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: OtherPage())
+              : const OtherPage(),
         ),
         GoRoute(
           path: 'history',
-          builder: (context, state) => const HistoryPage(),
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: HistoryPage())
+              : const HistoryPage(),
         ),
       ],
     ),
@@ -75,4 +88,36 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class WebMobileWrapper extends StatelessWidget {
+  final Widget child;
 
+  const WebMobileWrapper({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[300],
+      body: Center(
+        child: Container(
+          width: 375,
+          height: 812,
+          decoration: BoxDecoration(
+
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 20,
+                spreadRadius: 5,
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
