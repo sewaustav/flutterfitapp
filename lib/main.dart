@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/pages/history/history.dart';
+import 'package:flutterfitapp/pages/program/add_exercises.dart';
+import 'package:flutterfitapp/pages/program/create_program.dart';
 import 'package:flutterfitapp/pages/program_app/exercise.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
 import 'package:flutterfitapp/pages/program_app/list_exercise.dart';
@@ -67,6 +69,22 @@ final _router = GoRouter(
               ? const WebMobileWrapper(child: HistoryPage())
               : const HistoryPage(),
         ),
+        GoRoute(
+          path: 'create',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: CreateProgramPage())
+              : const CreateProgramPage(),
+        ),
+        GoRoute(
+          path: 'create_training',
+          builder: (context, state) {
+            final programId = state.extra as int; // <- получаем ID из extra
+            final page = AddExercisesPage(programId: programId.toString());
+            return kIsWeb ? WebMobileWrapper(child: page) : page;
+          },
+        ),
+
+
       ],
     ),
   ],

@@ -23,13 +23,14 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       thirdGroup: fields[3] as String?,
       rating: fields[4] as int?,
       img: fields[5] as String?,
+      id: fields[6] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exercise obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       ..writeByte(4)
       ..write(obj.rating)
       ..writeByte(5)
-      ..write(obj.img);
+      ..write(obj.img)
+      ..writeByte(6)
+      ..write(obj.id);
   }
 
   @override

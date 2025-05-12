@@ -86,7 +86,7 @@ class HomePage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
-                            "Этот элемент плавно наезжает на изображение при скролле вниз.",
+                            "Your Smart Workout Companion — Track your progress, get personalized AI-powered training plans, and reach your fitness goals faster..",
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
@@ -112,7 +112,7 @@ class HomePage extends StatelessWidget {
               context.go('/programs');
               break;
             case 1:
-              context.go('/exercises');
+              context.go('/exercise');
               break;
             case 2:
               context.go('/profile');

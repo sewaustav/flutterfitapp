@@ -22,6 +22,9 @@ class Exercise {
   @HiveField(5)
   final String? img;
 
+  @HiveField(6)
+  final int? id;
+
   Exercise({
     required this.name,
     required this.muscleGroup,
@@ -29,6 +32,7 @@ class Exercise {
     this.thirdGroup,
     this.rating,
     this.img,
+    this.id
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
@@ -39,6 +43,7 @@ class Exercise {
       thirdGroup: json['third_group'],
       rating: json['rating'],
       img: json['img'],
+      id: json['id']
     );
   }
 }

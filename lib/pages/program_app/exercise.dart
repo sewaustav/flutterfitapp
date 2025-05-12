@@ -20,7 +20,7 @@ class _ExercisePageState extends State<ExercisePage> {
   late Box<Exercise> exerciseBox;
 
   final String token = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
-  final String baseUrl = 'http://127.0.0.1:8000/api/api/exercise/';
+  final String baseUrl = 'https://dotfit.pythonanywhere.com/api/api/exercise/';
 
   @override
   void initState() {
