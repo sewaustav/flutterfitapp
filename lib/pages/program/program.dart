@@ -129,11 +129,12 @@ class _ProgramPageState extends State<ProgramPage> {
                                 PopupMenuItem(value: 'edit', child: Text('Редактировать')),
                                 PopupMenuItem(value: 'delete', child: Text('Удалить')),
                               ],
-                              onSelected: (value) {
+                              onSelected: (value) async {
                                 if (value == 'edit') {
                                   print('Редактировать');
                                 } else if (value == 'delete') {
-                                  deleteProgramByName(program['name']);
+                                  await deleteProgramByName(program['name']);
+                                  await getListProgram();
                                 }
                               },
                             )
