@@ -119,70 +119,70 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
       body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-              itemCount: _workoutFields.length,
-              itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.only(bottom: 12),
-                child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  children: [
-                    DropdownButtonFormField<Exercise>(
-                      decoration: InputDecoration(labelText: 'Упражнение'),
-                      value: _selectedExercises[index],
-                      items: allExercises.map((exercise) {
-                        return DropdownMenuItem<Exercise>(
-                          value: exercise,
-                          child: Text(exercise.name),
-                        );
-                      }).toList(),
-                      onChanged: (Exercise? newValue) {
-                        setState(() {
-                          _selectedExercises[index] = newValue;
-                          _workoutFields[index]['exercise'] = newValue?.id; // ВАЖНО: сохраняем id
-                        });
-                      },
-                    ),
+            children: [
+              Expanded(
+                child: ListView.builder(
+                itemCount: _workoutFields.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: EdgeInsets.only(bottom: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          DropdownButtonFormField<Exercise>(
+                            decoration: InputDecoration(labelText: 'Упражнение'),
+                            value: _selectedExercises[index],
+                            items: allExercises.map((exercise) {
+                              return DropdownMenuItem<Exercise>(
+                                value: exercise,
+                                child: Text(exercise.name),
+                              );
+                            }).toList(),
+                            onChanged: (Exercise? newValue) {
+                              setState(() {
+                                _selectedExercises[index] = newValue;
+                                _workoutFields[index]['exercise'] = newValue?.id; // ВАЖНО: сохраняем id
+                              });
+                            },
+                          ),
 
-                    TextField(
-                      controller: _setsControllers[index],
-                      decoration: InputDecoration(labelText: 'Подходы'),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                      _workoutFields[index]['sets'] = value;
-                      },
-                    ),
-                    TextField(
-                      controller: _repsControllers[index],
-                      decoration: InputDecoration(labelText: 'Повторения'),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                      _workoutFields[index]['reps'] = value;
-                      },
-                    ),
-                    TextField(
-                      controller: _weightControllers[index],
-                      decoration: InputDecoration(labelText: 'Вес (кг)'),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                      _workoutFields[index]['weight'] = value;
-                    },
-                    ),
-                    if (_workoutFields.length > 1)
-                      TextButton(
-                      onPressed: () => _deleteWorkoutField(index),
-                      child: Text('Удалить', style: TextStyle(color: Colors.red)),
+                          TextField(
+                            controller: _setsControllers[index],
+                            decoration: InputDecoration(labelText: 'Подходы'),
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                            _workoutFields[index]['sets'] = value;
+                            },
+                          ),
+                          TextField(
+                            controller: _repsControllers[index],
+                            decoration: InputDecoration(labelText: 'Повторения'),
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                            _workoutFields[index]['reps'] = value;
+                            },
+                          ),
+                          TextField(
+                            controller: _weightControllers[index],
+                            decoration: InputDecoration(labelText: 'Вес (кг)'),
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                            _workoutFields[index]['weight'] = value;
+                          },
+                          ),
+                          if (_workoutFields.length > 1)
+                            TextButton(
+                              onPressed: () => _deleteWorkoutField(index),
+                              child: Text('Удалить', style: TextStyle(color: Colors.red)),
+                            ),
+                        ],
                       ),
-                    ],
+                    ),
+                  );
+                },
+                ),
             ),
-          ),
-          );
-          },
-          ),
-          ),
           ElevatedButton(
             onPressed: _addWorkoutField,
             child: Text('Добавить упражнение'),
@@ -198,7 +198,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
             ),
           ],
           ),
-          ),
+      ),
     );
   }
 

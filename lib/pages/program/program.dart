@@ -35,6 +35,7 @@ class _ProgramPageState extends State<ProgramPage> {
             utf8.decode(response.bodyBytes));
         setState(() {
           programs = jsonData;
+          logger.i(programs);
           isLoading = false;
         });
       }
@@ -117,10 +118,17 @@ class _ProgramPageState extends State<ProgramPage> {
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
   
                             Expanded(child:
-                              Text(program['name'] ?? 'None', style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 30,
-                              ),),
+                                InkWell(
+                                  child: Text(program['name'] ?? 'None', style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 30,
+                                  ),),
+                                  onTap: () {
+                                    context.push('/view_training', extra: program['id']);
+                                  },
+                                  hoverColor: Colors.transparent,
+                                )
+
                             ),
   
                             PopupMenuButton<String>(
@@ -144,6 +152,7 @@ class _ProgramPageState extends State<ProgramPage> {
                             margin: EdgeInsets.only(top: 10),
                             child: Text(program['description'] ?? 'Without description'),
                           ),
+
   
                           Container(
                             margin: EdgeInsets.only(top: 50),

@@ -130,10 +130,7 @@ class _FormExerciseState extends State<FormExercise> {
                     });
 
                     if (mounted) {
-                      context.push('/create_training', extra: programId); // без :id в URL!
-
-
-
+                      context.push('/create_training', extra: programId);
                     }
                   } catch (e) {
                     if (mounted) {

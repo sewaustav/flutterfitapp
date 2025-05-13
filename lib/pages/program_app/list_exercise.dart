@@ -23,6 +23,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
   @override
   Widget build(BuildContext context) {
     final exercises = exerciseBox.values.toList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyColors.blue_color,
