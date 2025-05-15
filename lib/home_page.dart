@@ -112,7 +112,7 @@ class HomePage extends StatelessWidget {
               context.go('/programs');
               break;
             case 1:
-              context.go('/exercises');
+              context.go('/exercise');
               break;
             case 2:
               context.go('/profile');

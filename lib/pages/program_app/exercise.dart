@@ -53,7 +53,7 @@ class _ExercisePageState extends State<ExercisePage> {
       });
 
       if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
+        final List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
         await _updateLocalStorage(jsonData);
         _loadLocalExercises();
       }

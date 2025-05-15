@@ -12,16 +12,18 @@ import '../program_app/exercise_model.dart';
 
 final logger = Logger();
 
-class AddExercisesPage extends StatefulWidget {
-  const AddExercisesPage({super.key, required this.programId});
+class ProgramEditPage extends StatefulWidget {
+  const ProgramEditPage({super.key, required this.programId});
+
   final String programId;
-  
+
   @override
-  State<AddExercisesPage> createState() => _AddExercisesPageState();
+  State<ProgramEditPage> createState() => _ProgramEditPageState();
 }
 
-class _AddExercisesPageState extends State<AddExercisesPage> {
+class _ProgramEditPageState extends State<ProgramEditPage> {
 
+  List<dynamic> exercises = [];
   late Box<Exercise> exerciseBox;
   List<Exercise> allExercises = [];
 
@@ -32,23 +34,19 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     allExercises = exerciseBox.values.toList();
   }
 
-
   final List<Map<String, dynamic>> _workoutFields = [
     {'exercise': '', 'sets': '', 'reps': '', 'weight': ''}
   ];
 
   List<Exercise?> _selectedExercises = [null];
-  // final List<TextEditingController> _exerciseControllers = [TextEditingController()];
+
   final List<TextEditingController> _setsControllers = [TextEditingController()];
   final List<TextEditingController> _repsControllers = [TextEditingController()];
   final List<TextEditingController> _weightControllers = [TextEditingController()];
-  // final List<TextEditingController> _programControllers = [TextEditingController()];
 
   void _addWorkoutField() {
     setState(() {
       _workoutFields.add({'exercise': '', 'sets': '', 'reps': '', 'weight': ''});
-      // _programControllers.add(TextEditingController());
-      // _exerciseControllers.add(TextEditingController());
       _selectedExercises.add(null);
       _setsControllers.add(TextEditingController());
       _repsControllers.add(TextEditingController());
@@ -60,8 +58,6 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     if (_workoutFields.length > 1) {
       setState(() {
         _workoutFields.removeAt(index);
-        // _programControllers.removeAt(index);
-        // _exerciseControllers.removeAt(index);
         _setsControllers.removeAt(index);
         _repsControllers.removeAt(index);
         _weightControllers.removeAt(index);
@@ -69,9 +65,9 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     }
   }
 
-  final String token = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
+  final String TOKEN = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
 
-  Future<void> _submitWorkoutData() async {
+  Future<void> _editProgram() async {
     List<Map<String, dynamic>> workoutData = [];
     for (int i = 0; i < _workoutFields.length; i++) {
       workoutData.add({
@@ -85,25 +81,21 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
 
     try {
       for (final workout in workoutData) {
-        logger.i('${workout}');
-        final response = await http.post(
-          Uri.parse('https://dotfit.pythonanywhere.com/api/api/program_exercise/'),
+        final response = await http.put(
+          Uri.parse('https://dotfit.pythonanywhere.com/api/api/program_exercise/?program=${widget.programId}'),
           headers: {
-            'Authorization': 'Token $token',
+            'Authorization': 'Token $TOKEN',
             'Content-Type': 'application/json',
           },
-          body: jsonEncode(workout),
+          body: jsonEncode(workout)
         );
-        logger.i('${response.statusCode}');
-        logger.i('${response.body}');
-
       }
       context.go('/programs');
-
     }
     catch (e) {
-      logger.i('Fail');
+      logger.i('fail');
     }
+
   }
 
   @override
@@ -118,11 +110,11 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
         ),),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
                 itemCount: _workoutFields.length,
                 itemBuilder: (context, index) {
                   return Card(
@@ -154,7 +146,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                             decoration: InputDecoration(labelText: 'Sets'),
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
-                            _workoutFields[index]['sets'] = value;
+                              _workoutFields[index]['sets'] = value;
                             },
                           ),
                           TextField(
@@ -162,7 +154,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                             decoration: InputDecoration(labelText: 'Reps'),
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
-                            _workoutFields[index]['reps'] = value;
+                              _workoutFields[index]['reps'] = value;
                             },
                           ),
                           TextField(
@@ -170,8 +162,8 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                             decoration: InputDecoration(labelText: 'weight (kg)'),
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
-                            _workoutFields[index]['weight'] = value;
-                          },
+                              _workoutFields[index]['weight'] = value;
+                            },
                           ),
                           if (_workoutFields.length > 1)
                             TextButton(
@@ -183,23 +175,10 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                     ),
                   );
                 },
-                ),
-            ),
-          ElevatedButton(
-            onPressed: _addWorkoutField,
-            child: Text('Add exercise'),
-          ),
-          SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _submitWorkoutData,
-              child: Text('Save program', style: TextStyle(color: Colors.white),),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: EdgeInsets.symmetric(vertical: 16),
               ),
             ),
           ],
-          ),
+        ),
       ),
     );
   }
