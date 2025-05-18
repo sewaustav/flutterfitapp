@@ -48,7 +48,7 @@ class _ProgramPageState extends State<ProgramPage> {
     try {
       final url = Uri.parse('https://dotfit.pythonanywhere.com/api/api/programs/delete/$name');
       logger.i(url);
-      final response = await http.delete(url, headers: {'Authorization': 'Bearer $token'});
+      final response = await http.delete(url, headers: {'Authorization': 'Token $token'});
 
       if (response.statusCode == 204) {
         logger.i('Response status:success: ${response.statusCode}');
@@ -139,7 +139,7 @@ class _ProgramPageState extends State<ProgramPage> {
                               ],
                               onSelected: (value) async {
                                 if (value == 'edit') {
-                                  print('Редактировать');
+                                  context.push('/edit_training', extra: program['id']);
                                 } else if (value == 'delete') {
                                   await deleteProgramByName(program['name']);
                                   await getListProgram();

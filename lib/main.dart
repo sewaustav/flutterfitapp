@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterfitapp/pages/history/history.dart';
 import 'package:flutterfitapp/pages/program/add_exercises.dart';
 import 'package:flutterfitapp/pages/program/create_program.dart';
+import 'package:flutterfitapp/pages/program/program_edit.dart';
 import 'package:flutterfitapp/pages/program/program_view.dart';
 import 'package:flutterfitapp/pages/program_app/exercise.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
@@ -79,7 +80,7 @@ final _router = GoRouter(
         GoRoute(
           path: 'create_training',
           builder: (context, state) {
-            final programId = state.extra as int; // <- получаем ID из extra
+            final programId = state.extra as int;
             final page = AddExercisesPage(programId: programId.toString());
             return kIsWeb ? WebMobileWrapper(child: page) : page;
           },
@@ -87,8 +88,16 @@ final _router = GoRouter(
         GoRoute(
           path: 'view_training',
           builder: (context, state) {
-            final programId = state.extra as int; // <- получаем ID из extra
+            final programId = state.extra as int;
             final page = ProgramViewPage(programId: programId.toString());
+            return kIsWeb ? WebMobileWrapper(child: page) : page;
+          },
+        ),
+        GoRoute(
+          path: 'edit_training',
+          builder: (context, state) {
+            final programId = state.extra as int;
+            final page = ProgramEditPage(programId: programId.toString());
             return kIsWeb ? WebMobileWrapper(child: page) : page;
           },
         ),

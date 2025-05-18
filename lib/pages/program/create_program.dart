@@ -56,8 +56,8 @@ class _FormExerciseState extends State<FormExercise> {
         final response = await http.post(
           Uri.parse(baseUrl),
           headers: {
-            'Authorization': 'Token $token',  // <-- Добавьте заголовок
-            'Content-Type': 'application/json',  // Рекомендуется для JSON
+            'Authorization': 'Token $token',
+            'Content-Type': 'application/json',
           },
           body: jsonEncode(data),
         );
