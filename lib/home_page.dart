@@ -57,27 +57,7 @@ class HomePage extends StatelessWidget {
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                            child: SizedBox(
-                              width: 150,
-                              child: TextButton(
-                                onPressed: () => context.go('/programs'),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: MyColors.blue_color,
-                                  padding: EdgeInsets.all(20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  )
-                                ),
-                                child: Text("Let's go train!", style: TextStyle(color: Colors.white),)
-                              ),
-                            )
-                        ),
+                        StartTrainButton(),
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           padding: const EdgeInsets.all(16),
@@ -86,7 +66,7 @@ class HomePage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
-                            "Your Smart Workout Companion — Track your progress, get personalized AI-powered training plans, and reach your fitness goals faster..",
+                            "Your Smart Workout Companion — Track your progress, get personalized AI-powered practice plans, and reach your fitness goals faster..",
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
@@ -101,48 +81,90 @@ class HomePage extends StatelessWidget {
         ],
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+      bottomNavigationBar: Navigation(),
 
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              context.go('/programs');
-              break;
-            case 1:
-              context.go('/exercises');
-              break;
-            case 2:
-              context.go('/profile');
-              break;
-            case 3:
-              context.go('/history');
-              break;
-          }
-        },
-        items:  [
-          BottomNavigationBarItem(
-            icon: dumbell,
-            label: 'Programs',
-          ),
-          BottomNavigationBarItem(
-            icon: dumbell,
-            label: 'Exercises',
-          ),
-          BottomNavigationBarItem(
-            icon: profile,
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: history,
-            label: 'History',
-          ),
-        ],
+
+    );
+  }
+}
+
+class StartTrainButton extends StatelessWidget {
+  const StartTrainButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
       ),
+        child: SizedBox(
+          width: 150,
+          child: TextButton(
+            onPressed: () => context.go('/programs'),
+            style: TextButton.styleFrom(
+              backgroundColor: MyColors.blue_color,
+              padding: EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              )
+            ),
+            child: Text("Let's go train!", style: TextStyle(color: Colors.white),)
+          ),
+        )
+    );
+  }
+}
 
+class Navigation extends StatelessWidget {
+  const Navigation({
+    super.key,
+  });
 
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      unselectedItemColor: Colors.grey,
+      showUnselectedLabels: true,
+
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            context.go('/programs');
+            break;
+          case 1:
+            context.go('/exercises');
+            break;
+          case 2:
+            context.go('/profile');
+            break;
+          case 3:
+            context.go('/history');
+            break;
+        }
+      },
+      items:  [
+        BottomNavigationBarItem(
+          icon: dumbell,
+          label: 'Programs',
+        ),
+        BottomNavigationBarItem(
+          icon: dumbell,
+          label: 'Exercises',
+        ),
+        BottomNavigationBarItem(
+          icon: profile,
+          label: 'Profile',
+        ),
+        BottomNavigationBarItem(
+          icon: history,
+          label: 'History',
+        ),
+      ],
     );
   }
 }

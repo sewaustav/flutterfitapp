@@ -158,7 +158,7 @@ class _ProgramPageState extends State<ProgramPage> {
                             margin: EdgeInsets.only(top: 50),
                             child: SizedBox(width: 200,child:
                               TextButton(
-                                  onPressed: null,
+                                  onPressed: () => context.push('/practice', extra: program['id']),
                                   style: TextButton.styleFrom(
                                     backgroundColor: MyColors.blue_color,
                                     shape: RoundedRectangleBorder(

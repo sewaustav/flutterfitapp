@@ -283,6 +283,7 @@ class _ProgramEditPageState extends State<ProgramEditPage> {
                           ),
 
                           TextField(
+                            readOnly: true,
                             controller: _setsControllers[index],
                             decoration: InputDecoration(labelText: 'Sets'),
                             keyboardType: TextInputType.number,
