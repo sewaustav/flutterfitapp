@@ -104,7 +104,7 @@ class StartTrainButton extends StatelessWidget {
         child: SizedBox(
           width: 150,
           child: TextButton(
-            onPressed: () => context.go('/programs'),
+            onPressed: () => context.go('/fast_practice'),
             style: TextButton.styleFrom(
               backgroundColor: MyColors.blue_color,
               padding: EdgeInsets.all(20),

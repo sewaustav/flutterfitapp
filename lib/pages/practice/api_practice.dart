@@ -39,7 +39,7 @@ class ApiService {
     }
   }
 
-  Future<void> postTrainingSet(int workout_id, List<Map<String, dynamic>> data) async {
+  Future<void> postTrainingSet(int workoutId, List<Map<String, dynamic>> data) async {
     try {
       for (final set in data) {
         final response = await http.post(
