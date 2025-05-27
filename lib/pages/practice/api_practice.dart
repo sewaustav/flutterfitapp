@@ -8,12 +8,12 @@ final logger = Logger();
 class ApiService {
 
   final String _TOKEN = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
-  final String _URL = 'https://dotfit.pythonanywhere.com/api/api/workout_result/';
+  final String _URL = 'https://dotfit.pythonanywhere.com/api/api/workout_result';
 
   Future<int> postTraining(Map<String, dynamic> data) async {
     try {
       final response = await http.post(
-        Uri.parse(_URL),
+        Uri.parse('$_URL/'),
         headers: {
           'Authorization': 'Token $_TOKEN',
           'Content-Type': 'application/json',
@@ -28,6 +28,7 @@ class ApiService {
         return id;
       }
       else {
+        logger.i(response.statusCode);
         return -1;
       }
 
@@ -38,11 +39,11 @@ class ApiService {
     }
   }
 
-  Future<void> postTrainingSet(String workout_id, List<Map<String, dynamic>> data) async {
+  Future<void> postTrainingSet(int workout_id, List<Map<String, dynamic>> data) async {
     try {
       for (final set in data) {
         final response = await http.post(
-          Uri.parse(_URL),
+          Uri.parse('${_URL}_set/'),
           headers: {
             'Authorization': 'Token $_TOKEN',
             'Content-Type': 'application/json',
@@ -52,6 +53,7 @@ class ApiService {
         );
 
         logger.i(response.statusCode);
+        logger.i(response.body);
 
       }
     }

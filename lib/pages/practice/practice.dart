@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/design/colors.dart';
+import 'package:go_router/go_router.dart';
 import '../program_app/exercise_model.dart';
 import 'api_practice.dart';
 import 'practice_func.dart';
@@ -19,6 +22,9 @@ class _PracticePageState extends State<PracticePage> {
   late final GetExercises getExercises;
   late final IExerciseRepository exerciseRepo;
   late final IWorkoutFormManager formManager;
+  late final TitleFormManager titleFormManager;
+
+  int indexForm = 0;
 
   List<dynamic> programData = [];
 
@@ -29,6 +35,7 @@ class _PracticePageState extends State<PracticePage> {
   }
 
   Future<void> _initialize() async {
+    titleFormManager = TitleFormManager();
     getExercises = GetExercises();
     apiService = ApiService();
     exerciseRepo = ExerciseRepository();
@@ -42,9 +49,18 @@ class _PracticePageState extends State<PracticePage> {
     programData = await getExercises.getExercises(int.parse(widget.programId));
     logger.i(programData);
     formManager.fillData(programData, widget.programId);
+    logger.i(formManager.workoutFields.length);
     setState(() {
       programData = programData;
     });
+  }
+
+  int getGlobalIndex(int exerciseIndex, int setIndex) {
+    int globalIndex = 0;
+    for (int i = 0; i < exerciseIndex; i++) {
+      globalIndex += programData[i]['sets'] as int;
+    }
+    return globalIndex + setIndex;
   }
 
   @override
@@ -60,6 +76,31 @@ class _PracticePageState extends State<PracticePage> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: titleFormManager.title,
+                  decoration: const InputDecoration(
+                    labelText: 'Session Title',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: titleFormManager.notes,
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: 'Notes',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           Expanded(
             child: ListView.builder(
               itemCount: programData.length,
@@ -83,9 +124,12 @@ class _PracticePageState extends State<PracticePage> {
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
-                                formManager.deleteWorkoutField(index);
-                                setState(() {
 
+                                setState(() {
+                                  int idEx = programData[index]['exercise'];
+                                  formManager.workoutFields.removeWhere((field) => field['exercise'] == idEx);
+                                  programData.removeAt(index);
+                                  logger.i(formManager.workoutFields);
                                 });
                               },
                             ),
@@ -98,7 +142,7 @@ class _PracticePageState extends State<PracticePage> {
                           itemCount: programData[index]['sets'],
                           itemBuilder: (context, setIndex) {
                             return Dismissible(
-                              key: Key('set_${index}_$setIndex'),
+                              key: UniqueKey(),
                               background: Container(
                                 color: Colors.red,
                                 alignment: Alignment.centerRight,
@@ -107,7 +151,23 @@ class _PracticePageState extends State<PracticePage> {
                               ),
                               direction: DismissDirection.endToStart,
                               onDismissed: (direction) {
+                                setState(() {
+                                  int globalIndex = getGlobalIndex(index, setIndex);
+                                  formManager.workoutFields.removeAt(globalIndex);
+                                  formManager.repsControllers[index].removeAt(setIndex);
+                                  formManager.weightControllers[index].removeAt(setIndex);
 
+                                  formManager.checkedStates[index]?.remove(setIndex);
+
+                                  programData[index]['sets'] = (programData[index]['sets'] as int) - 1;
+
+                                  if (programData[index]['sets'] == 0) {
+                                    programData.removeAt(index);
+                                    formManager.repsControllers.removeAt(index);
+                                    formManager.weightControllers.removeAt(index);
+                                    formManager.checkedStates.remove(index);
+                                  }
+                                });
                               },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -121,8 +181,8 @@ class _PracticePageState extends State<PracticePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                         child: TextFormField(
-                                          // controller: formManager.weightControllers[index][setIndex],
-                                          onChanged: (value) {formManager.workoutFields[index]['reps'] = value;},
+                                          controller: formManager.weightControllers[index][setIndex],
+                                          onChanged: (value) {formManager.workoutFields[getGlobalIndex(index, setIndex)]['weight'] = value;},
                                           decoration: const InputDecoration(
                                             labelText: 'Weight',
                                             border: OutlineInputBorder(),
@@ -135,7 +195,8 @@ class _PracticePageState extends State<PracticePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                         child: TextFormField(
-                                          onChanged: (value) {formManager.workoutFields[index]['reps'] = value;},
+                                          controller: formManager.repsControllers[index][setIndex],
+                                          onChanged: (value) {formManager.workoutFields[getGlobalIndex(index, setIndex)]['rep'] = value;},
                                           decoration: const InputDecoration(
                                             labelText: 'Reps',
                                             border: OutlineInputBorder(),
@@ -145,10 +206,25 @@ class _PracticePageState extends State<PracticePage> {
                                       ),
                                     ),
                                     Checkbox(
-                                      value: false,
+                                      value: formManager.checkedStates[index]?[setIndex] ?? false,
                                       onChanged: (bool? value) {
-
+                                        setState(() {
+                                          formManager.checkedStates[index] ??= {};
+                                          formManager.checkedStates[index]![setIndex] = value ?? false;
+                                          logger.i(formManager.workoutFields);
+                                          // logger.i('$index  $setIndex');
+                                        });
                                       },
+                                      activeColor: Colors.green,
+                                      checkColor: Colors.white,
+                                      fillColor: WidgetStateProperty.resolveWith<Color>(
+                                            (Set<WidgetState> states) {
+                                          if (states.contains(WidgetState.selected)) {
+                                            return Colors.green;
+                                          }
+                                          return Colors.white;
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -172,15 +248,57 @@ class _PracticePageState extends State<PracticePage> {
               },
             ),
           ),
-          ElevatedButton(onPressed: (){}, child: Text('Add exercise')),
+          ElevatedButton(
+            onPressed: () async {
+              final result = await showDialog<Map<String, dynamic>>(
+                context: context,
+                builder: (context) => AddExerciseDialog(exerciseRepo: exerciseRepo),
+              );
+
+              if (result != null) {
+                logger.i(result);
+                setState(() {
+                  programData.add({
+                    'exercise': result['exercise'],
+                    'sets': result['sets']
+                  });
+                  formManager.addExercise(result['exercise'], result['sets']);
+                });
+
+              }
+            },
+            child: Text('Add exercise'),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
-
+              onPressed: () async {
+                final tr_id = await apiService.postTraining({
+                  'name': titleFormManager.title.text,
+                  'user': 3,
+                  'notes': titleFormManager.notes.text
+                });
+                if (tr_id != -1) {
+                  List<Map<String, dynamic>> data = [];
+                  for (int i = 0; i < formManager.workoutFields.length; i++) {
+                    data.add({
+                      'workout': tr_id,
+                      'exercise': formManager.workoutFields[i]['exercise'],
+                      'set': formManager.workoutFields[i]['set'],
+                      'rep': int.parse(formManager.workoutFields[i]['rep']),
+                      'weight': int.parse(formManager.workoutFields[i]['weight'])
+                    });
+                  }
+                  logger.i(data);
+                  apiService.postTrainingSet(tr_id, data);
+                }
+                else {
+                  logger.i('Error');
+                }
+                context.go('/programs');
               },
               child: const Text('End Session'),
             ),
@@ -190,5 +308,75 @@ class _PracticePageState extends State<PracticePage> {
     );
   }
 
+}
+
+
+class AddExerciseDialog extends StatefulWidget {
+  final IExerciseRepository exerciseRepo;
+
+  const AddExerciseDialog({required this.exerciseRepo, super.key});
+
+  @override
+  State<AddExerciseDialog> createState() => _AddExerciseDialogState();
+}
+
+class _AddExerciseDialogState extends State<AddExerciseDialog> {
+  int? selectedExerciseId;
+  int sets = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Add New Exercise'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DropdownButtonFormField<int>(
+            value: selectedExerciseId,
+            decoration: InputDecoration(labelText: 'Exercise'),
+            items: widget.exerciseRepo.allExercises.map((exercise) {
+              return DropdownMenuItem<int>(
+                value: exercise.id,
+                child: Text(exercise.name),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                selectedExerciseId = value;
+              });
+            },
+          ),
+          SizedBox(height: 16),
+          TextFormField(
+            initialValue: '1',
+            decoration: InputDecoration(labelText: 'Sets'),
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              sets = int.tryParse(value) ?? 1;
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: selectedExerciseId == null
+              ? null
+              : () {
+            Navigator.pop(context, {
+              'exercise': selectedExerciseId,
+              'sets': sets,
+              'reps': 0,
+              'weight': 0,
+            });
+          },
+          child: Text('Add'),
+        ),
+      ],
+    );
+  }
 }
 
