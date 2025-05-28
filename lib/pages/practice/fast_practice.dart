@@ -263,7 +263,6 @@ class _FastPracticePageState extends State<FastPracticePage> {
               onPressed: () async {
                 final tr_id = await apiService.postTraining({
                   'name': titleFormManager.title.text,
-                  'user': 3,
                   'notes': titleFormManager.notes.text
                 });
                 if (tr_id != -1) {

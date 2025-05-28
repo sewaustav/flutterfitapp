@@ -124,7 +124,6 @@ class _FormExerciseState extends State<FormExercise> {
 
                     final programId = await createDprogram({
                       'name': _nameProgram.text,
-                      'user': 3,
                       'description': 'Best program',
                       'type_of_program': _typeProgram.text,
                     });
