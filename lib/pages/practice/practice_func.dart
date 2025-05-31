@@ -22,7 +22,7 @@ abstract class IWorkoutFormManager {
   void fillData(List<dynamic> data, String programId);
   void addExercise(int exercise, int set);
   void deleteWorkoutField(int index);
-  void addSet(int exercise, int set);
+  void addSet(int exerciseIndex, int exerciseId);
   List<Map<String, dynamic>> getWorkoutData(String programId);
   void dispose();
 }
@@ -93,8 +93,22 @@ class WorkoutFormManager implements IWorkoutFormManager {
   }
 
   @override
-  void addSet(int exercise, int set) {
-    workoutFields.add({'exercise': '', 'workout': '', 'set': '', 'reps': '', 'weight': ''});
+  void addSet(int exerciseIndex, int exerciseId) {
+    int currentSetCount = repsControllers[exerciseIndex].length;
+    int newSetNumber = currentSetCount + 1;
+
+    repsControllers[exerciseIndex].add(TextEditingController(text: ''));
+    weightControllers[exerciseIndex].add(TextEditingController(text: ''));
+
+    workoutFields.add({
+      'exercise': exerciseId,
+      'set': newSetNumber,
+      'rep': '',
+      'weight': ''
+    });
+
+    checkedStates[exerciseIndex] ??= {};
+    checkedStates[exerciseIndex]![currentSetCount] = false;
 
   }
 

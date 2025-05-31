@@ -10,6 +10,7 @@ import 'package:flutterfitapp/pages/program/program_view.dart';
 import 'package:flutterfitapp/pages/program_app/exercise.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
 import 'package:flutterfitapp/pages/program_app/list_exercise.dart';
+import 'package:flutterfitapp/reg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/pages/program/program.dart';
 import 'package:flutterfitapp/pages/other/other.dart';
@@ -22,6 +23,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 
 void main() async{
+
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   if (!Hive.isAdapterRegistered(0)) {
@@ -126,7 +128,12 @@ final _router = GoRouter(
               ? const WebMobileWrapper(child: FastPracticePage())
               : const FastPracticePage(),
         ),
-
+        GoRoute(
+          path: 'reg',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: GoogleSignInPage())
+              : const GoogleSignInPage(),
+        ),
 
       ],
     ),

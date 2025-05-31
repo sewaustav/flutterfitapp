@@ -58,6 +58,9 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         StartTrainButton(),
+                        TextButton(onPressed: () =>
+                            context.go('/reg'),
+                            child: Text('CLICK')),
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           padding: const EdgeInsets.all(16),
@@ -140,10 +143,10 @@ class Navigation extends StatelessWidget {
             context.go('/exercises');
             break;
           case 2:
-            context.go('/profile');
+            context.go('/history');
             break;
           case 3:
-            context.go('/history');
+            context.go('/profile');
             break;
         }
       },
@@ -155,14 +158,13 @@ class Navigation extends StatelessWidget {
         BottomNavigationBarItem(
           icon: dumbell,
           label: 'Exercises',
+        ),BottomNavigationBarItem(
+          icon: history,
+          label: 'History',
         ),
         BottomNavigationBarItem(
           icon: profile,
           label: 'Profile',
-        ),
-        BottomNavigationBarItem(
-          icon: history,
-          label: 'History',
         ),
       ],
     );

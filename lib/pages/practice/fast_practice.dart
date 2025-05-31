@@ -223,6 +223,10 @@ class _FastPracticePageState extends State<FastPracticePage> {
                             icon: const Icon(Icons.add),
                             label: const Text('Add set'),
                             onPressed: () {
+                              setState(() {
+                                programData[index]['sets'] = (programData[index]['sets'] as int) + 1;
+                                formManager.addSet(index, programData[index]['exercise']);
+                              });
                             },
                           ),
                         ),
