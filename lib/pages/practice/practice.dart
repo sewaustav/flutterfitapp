@@ -302,7 +302,7 @@ class _PracticePageState extends State<PracticePage> {
                 else {
                   logger.i('Error');
                 }
-                context.go('/programs');
+                context.go('/history');
               },
               child: const Text('End Session'),
             ),

@@ -10,12 +10,13 @@ import 'package:flutterfitapp/pages/program/program_view.dart';
 import 'package:flutterfitapp/pages/program_app/exercise.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
 import 'package:flutterfitapp/pages/program_app/list_exercise.dart';
-import 'package:flutterfitapp/reg.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/pages/program/program.dart';
 import 'package:flutterfitapp/pages/other/other.dart';
 import 'package:flutterfitapp/pages/profile/profile.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'auth/registration.dart';
 import 'home_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -34,7 +35,7 @@ void main() async{
 }
 
 final _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/registration',
   routes: [
     GoRoute(
       path: '/',
@@ -51,6 +52,12 @@ final _router = GoRouter(
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: ExercisePage())
               : const ExercisePage(),
+        ),
+        GoRoute(
+          path: 'registration',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: RegistrationPage())
+              : const RegistrationPage(),
         ),
         GoRoute(
           path: 'programs',
@@ -128,12 +135,7 @@ final _router = GoRouter(
               ? const WebMobileWrapper(child: FastPracticePage())
               : const FastPracticePage(),
         ),
-        GoRoute(
-          path: 'reg',
-          builder: (context, state) => kIsWeb
-              ? const WebMobileWrapper(child: GoogleSignInPage())
-              : const GoogleSignInPage(),
-        ),
+
 
       ],
     ),

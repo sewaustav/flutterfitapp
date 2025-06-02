@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+
+import 'api_program.dart';
 
 final logger = Logger();
 
@@ -18,53 +17,24 @@ class ProgramPage extends StatefulWidget {
 
 class _ProgramPageState extends State<ProgramPage> {
   List<dynamic> programs = [];
-  bool isLoading = true;
-  final String token = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
-  final String baseUrl = 'https://dotfit.pythonanywhere.com/api/api/dprogram';
-
-  Future<void> getListProgram() async {
-    try {
-      final response = await http.get(Uri.parse(baseUrl), headers: {
-        'Authorization': 'Token $token',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      });
-      if (!mounted) return;
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(
-            utf8.decode(response.bodyBytes));
-        setState(() {
-          programs = jsonData;
-          logger.i(programs);
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future<void> deleteProgramByName(String name, ) async {
-    try {
-      final url = Uri.parse('https://dotfit.pythonanywhere.com/api/api/programs/delete/$name');
-      logger.i(url);
-      final response = await http.delete(url, headers: {'Authorization': 'Token $token'});
-
-      if (response.statusCode == 204) {
-        logger.i('Response status:success: ${response.statusCode}');
-      }
-      else {logger.i('Response status: ${response.statusCode} ${response.body}');}
-    }
-    catch (e) {
-      print(e);
-    }
-  }
+  late GetDataMethods getDataMethods;
+  late DeleteDataMethods deleteDataMethods;
 
 
   @override
   void initState() {
     super.initState();
-    getListProgram();
+    _init();
+  }
+
+  Future<void> _init() async {
+    getDataMethods = GetDataMethods();
+    deleteDataMethods = DeleteDataMethods();
+
+    final programList = await getDataMethods.getProgramList();
+    setState(() {
+      programs = programList;
+    });
   }
 
   @override
@@ -141,8 +111,11 @@ class _ProgramPageState extends State<ProgramPage> {
                                 if (value == 'edit') {
                                   context.push('/edit_training', extra: program['id']);
                                 } else if (value == 'delete') {
-                                  await deleteProgramByName(program['name']);
-                                  await getListProgram();
+                                  await deleteDataMethods.deleteProgramByName(program['name']);
+                                  final programList = await getDataMethods.getProgramList();
+                                  setState(() {
+                                    programs = programList;
+                                  });
                                 }
                               },
                             )

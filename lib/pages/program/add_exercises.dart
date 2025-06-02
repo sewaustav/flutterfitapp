@@ -1,14 +1,11 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 import '../program_app/exercise_model.dart';
+import 'api_program.dart';
 
 final logger = Logger();
 
@@ -23,6 +20,8 @@ class AddExercisesPage extends StatefulWidget {
 class _AddExercisesPageState extends State<AddExercisesPage> {
 
   late Box<Exercise> exerciseBox;
+  late PostDataMethods postDataMethods;
+
   List<Exercise> allExercises = [];
 
   @override
@@ -30,6 +29,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     super.initState();
     exerciseBox = Hive.box<Exercise>('exercises');
     allExercises = exerciseBox.values.toList();
+    postDataMethods = PostDataMethods();
   }
 
 
@@ -38,17 +38,13 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
   ];
 
   List<Exercise?> _selectedExercises = [null];
-  // final List<TextEditingController> _exerciseControllers = [TextEditingController()];
   final List<TextEditingController> _setsControllers = [TextEditingController()];
   final List<TextEditingController> _repsControllers = [TextEditingController()];
   final List<TextEditingController> _weightControllers = [TextEditingController()];
-  // final List<TextEditingController> _programControllers = [TextEditingController()];
 
   void _addWorkoutField() {
     setState(() {
       _workoutFields.add({'exercise': '', 'sets': '', 'reps': '', 'weight': ''});
-      // _programControllers.add(TextEditingController());
-      // _exerciseControllers.add(TextEditingController());
       _selectedExercises.add(null);
       _setsControllers.add(TextEditingController());
       _repsControllers.add(TextEditingController());
@@ -60,16 +56,13 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     if (_workoutFields.length > 1) {
       setState(() {
         _workoutFields.removeAt(index);
-        // _programControllers.removeAt(index);
-        // _exerciseControllers.removeAt(index);
+        _selectedExercises.removeAt(index);
         _setsControllers.removeAt(index);
         _repsControllers.removeAt(index);
         _weightControllers.removeAt(index);
       });
     }
   }
-
-  final String token = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
 
   Future<void> _submitWorkoutData() async {
     List<Map<String, dynamic>> workoutData = [];
@@ -85,24 +78,13 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
 
     try {
       for (final workout in workoutData) {
-        logger.i('${workout}');
-        final response = await http.post(
-          Uri.parse('https://dotfit.pythonanywhere.com/api/api/program_exercise/'),
-          headers: {
-            'Authorization': 'Token $token',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(workout),
-        );
-        logger.i('${response.statusCode}');
-        logger.i('${response.body}');
-
+        postDataMethods.submitWorkoutData(workout);
       }
       context.go('/programs');
 
     }
     catch (e) {
-      logger.i('Fail');
+      logger.i('$e');
     }
   }
 

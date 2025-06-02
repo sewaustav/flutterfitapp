@@ -19,8 +19,8 @@ class _ExercisePageState extends State<ExercisePage> {
   bool isLoading = true;
   late Box<Exercise> exerciseBox;
 
-  final String token = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
-  final String baseUrl = 'https://dotfit.pythonanywhere.com/api/api/exercise/';
+  final String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMjk2Mjc1LCJpYXQiOjE3NDg3MDQyNzUsImp0aSI6Ijk2Y2M5ZjQzN2UxNDQzZGJiMDQ4NmI0OTA1OWU5MjdhIiwidXNlcl9pZCI6N30.2sS5DsdYRvHaitj4n6od6dBET7tvllQAYJbyYxYJ_io';
+  final String baseUrl = 'https://127.0.0.1:8888/api/api/exercise/';
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _ExercisePageState extends State<ExercisePage> {
   Future<void> fetchExercises() async {
     try {
       final response = await http.get(Uri.parse(baseUrl), headers: {
-        'Authorization': 'Token $token',
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       });

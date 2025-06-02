@@ -1,13 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+
+import 'api_program.dart';
 
 final logger = Logger();
 
@@ -46,45 +42,20 @@ class FormExercise extends StatefulWidget {
 
 class _FormExerciseState extends State<FormExercise> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final String token = '7eb2178a8b4c92c149cd1ea79ef02fd4240edb92';
-  final String baseUrl = 'https://dotfit.pythonanywhere.com/api/api/dprogram/';
-
-
-  Future<int> createDprogram(Map<String, dynamic> data) async {
-    try {
-        final response = await http.post(
-          Uri.parse(baseUrl),
-          headers: {
-            'Authorization': 'Token $token',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(data),
-        );
-
-        if (response.statusCode == 201) {
-          logger.i('Success ${response.statusCode}');
-          final body = jsonDecode(response.body);
-          final id = body['id'] as int;
-          logger.i('FFFF${body['id']}');
-          return id;
-        }
-        else {
-            logger.i('Fail ${response.statusCode} ${response.body}');
-            return -1;
-        }
-    }
-    catch (e){
-      logger.i('$e');
-      return -1;
-    }
-  }
+  late PostDataMethods postDataMethods;
 
   final _nameProgram = TextEditingController();
   final _typeProgram = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    postDataMethods = PostDataMethods();
+  }
+
+  @override
   void dispose() {
+    super.dispose();
     _nameProgram.dispose();
     _typeProgram.dispose();
   }
@@ -122,7 +93,7 @@ class _FormExerciseState extends State<FormExercise> {
                 if (_formKey.currentState!.validate()) {
                   try {
 
-                    final programId = await createDprogram({
+                    final programId = await postDataMethods.createDprogram({
                       'name': _nameProgram.text,
                       'description': 'Best program',
                       'type_of_program': _typeProgram.text,

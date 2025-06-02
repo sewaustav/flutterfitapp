@@ -286,7 +286,7 @@ class _FastPracticePageState extends State<FastPracticePage> {
                 else {
                   logger.i('Error');
                 }
-                context.go('/programs');
+                context.go('/history');
               },
               child: const Text('End Session'),
             ),
