@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final logger = Logger();
+final _storage = FlutterSecureStorage();
 
 class UserRegistration {
 
@@ -31,7 +33,11 @@ class UserRegistration {
       final Map<String, dynamic> responseBody = json.decode(response.body);
       final String accessToken = responseBody['access'];
       final String refreshToken = responseBody['refresh'];
-      logger.i('$accessToken  $refreshToken');
+      // logger.i('$accessToken  $refreshToken');
+      await _storage.write(key: 'access', value: accessToken);
+      await _storage.write(key: 'refresh', value: refreshToken);
+      // String? access = await _storage.read(key: 'access');
+      // logger.i(access);
       return 1;
     }
     else {

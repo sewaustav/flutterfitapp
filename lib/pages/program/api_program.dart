@@ -1,20 +1,23 @@
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 final logger = Logger();
 
-final TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMjk2Mjc1LCJpYXQiOjE3NDg3MDQyNzUsImp0aSI6Ijk2Y2M5ZjQzN2UxNDQzZGJiMDQ4NmI0OTA1OWU5MjdhIiwidXNlcl9pZCI6N30.2sS5DsdYRvHaitj4n6od6dBET7tvllQAYJbyYxYJ_io';
+// final TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMjk2Mjc1LCJpYXQiOjE3NDg3MDQyNzUsImp0aSI6Ijk2Y2M5ZjQzN2UxNDQzZGJiMDQ4NmI0OTA1OWU5MjdhIiwidXNlcl9pZCI6N30.2sS5DsdYRvHaitj4n6od6dBET7tvllQAYJbyYxYJ_io';
+final _storage = FlutterSecureStorage();
 
 class GetDataMethods {
 
   Future<List<dynamic>> getData(String programId) async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
         Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/?program=${int.parse(programId)}'),
         headers: {
-          'Authorization': 'Token $TOKEN',
+          'Authorization': 'Token $_TOKEN',
           'Content-Type': 'application/json',
         },
       );
@@ -35,8 +38,9 @@ class GetDataMethods {
 
   Future<List<dynamic>> getProgramList() async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(Uri.parse('http://127.0.0.1:8888/api/api/dprogram'), headers: {
-        'Authorization': 'Bearer $TOKEN',
+        'Authorization': 'Bearer $_TOKEN',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       });
@@ -55,11 +59,12 @@ class GetDataMethods {
 
   Future<List<dynamic>> getExcercises(String programId) async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       logger.i('http://127.0.0.1:8888/api/api/program_exercise/program=${programId}');
       final response = await http.get(
         Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/?program=${programId}'),
         headers: {
-          'Authorization': 'Bearer $TOKEN',
+          'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
         },
       );
@@ -86,12 +91,13 @@ class DeleteDataMethods {
 
   Future<void> deleteProgramExById(int id) async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       final url = Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/$id/');
       logger.i(url);
       final response = await http.delete(
         url,
         headers: {
-          'Authorization': 'Bearer $TOKEN'}
+          'Authorization': 'Bearer $_TOKEN'}
       );
 
       if (response.statusCode == 204) {
@@ -106,12 +112,13 @@ class DeleteDataMethods {
 
   Future<void> deleteProgramByName(String name) async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       final url = Uri.parse('http://127.0.0.1:8888/api/api/programs/delete/$name');
       logger.i(url);
       final response = await http.delete(
         url,
         headers: {
-          'Authorization': 'Bearer $TOKEN'
+          'Authorization': 'Bearer $_TOKEN'
         }
       );
 
@@ -131,10 +138,11 @@ class PostDataMethods {
 
   Future<void> submitWorkoutData(final workout) async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.post(
         Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/'),
         headers: {
-          'Authorization': 'Bearer $TOKEN',
+          'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
         },
         body: jsonEncode(workout),
@@ -153,10 +161,11 @@ class PostDataMethods {
 
   Future<int> createDprogram(Map<String, dynamic> data) async {
     try {
+      String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.post(
         Uri.parse('http://127.0.0.1:8888/api/api/dprogram/'),
         headers: {
-          'Authorization': 'Bearer $TOKEN',
+          'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
         },
         body: jsonEncode(data),

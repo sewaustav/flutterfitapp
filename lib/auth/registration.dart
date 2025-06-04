@@ -90,7 +90,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       _emailInput.text
                     );
                     if (statusCode == 201) {
-                      final token = userRegistration.getToken(
+                      final token = await userRegistration.getToken(
                           _usernameInput.text,
                           _password1.text
                       );
