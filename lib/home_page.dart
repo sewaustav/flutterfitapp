@@ -1,19 +1,112 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutterfitapp/auth/token_script.dart';
 import 'package:flutterfitapp/design/colors.dart';
+import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/design/images.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 final logger = Logger();
+final _storage = FlutterSecureStorage();
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  List<Exercise> exercises = [];
+  late Box<Exercise> exerciseBox;
+  late RefreshToken refreshToken;
+
+  Future<void> _getKeys() async {
+    bool containsKeyAccess= await _storage.containsKey(key: 'accept');
+    bool containsKeyRefresh = await _storage.containsKey(key: 'refresh');
+    if (!containsKeyRefresh) {
+      context.go('/login');
+    }
+    else {
+      final bool isValid = await checkValidToken();
+      if (isValid) {
+        await refreshToken.getNewAccessToken();
+      }
+      else {
+        context.go('/login');
+      }
+    }
+  }
+
+  final _storage = FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    _initHive().then((_) => fetchExercises());
+    refreshToken = RefreshToken();
+    _getKeys();
+  }
+
+  Future<bool> checkValidToken() async {
+    String? access = await _storage.read(key: 'access');
+    final response = await http.get(
+      Uri.parse('http://127.0.0.1:8888/accounts/api/profile/'),
+      headers: {
+        'Authorization': 'Bearer $access'
+      }
+    );
+    return response.statusCode == 200;
+  }
+
+  Future<void> _initHive() async {
+    await Hive.initFlutter();
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(ExerciseAdapter());
+    }
+    exerciseBox = await Hive.openBox<Exercise>('exercises');
+  }
+
+  Future<void> fetchExercises() async {
+    try {
+      String? _TOKEN = await _storage.read(key: 'access');
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8888/api/api/exercise/'),
+        headers: {
+          'Authorization': 'Bearer $_TOKEN',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
+        await _updateLocalStorage(jsonData);
+      }
+      logger.i(response.statusCode);
+    } catch (e) {
+      logger.i(e);
+    }
+  }
+
+  Future<void> _updateLocalStorage(List<dynamic> newExercises) async {
+    await exerciseBox.clear();
+    for (var exercise in newExercises) {
+      final ex = Exercise.fromJson(exercise);
+      await exerciseBox.add(ex);
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
           title: Text('Home', style:TextStyle(
             color: Colors.white,
@@ -140,7 +233,7 @@ class Navigation extends StatelessWidget {
             context.go('/programs');
             break;
           case 1:
-            context.go('/exercises');
+            context.go('/exercise');
             break;
           case 2:
             context.go('/history');

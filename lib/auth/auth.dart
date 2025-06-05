@@ -1,34 +1,60 @@
-import 'dart:async';
-import 'package:logger/logger.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:uni_links/uni_links.dart';
-import 'package:web/web.dart' as web;
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'api_auth.dart';
 
-final logger = Logger();
+class AuthPage extends StatefulWidget {
+  const AuthPage({super.key});
 
-Future<void> handleIncomingAuthLink() async {
-  Uri? uri;
+  @override
+  State<AuthPage> createState() => _AuthPageState();
+}
 
-  if (kIsWeb) {
-    final href = web.window.location.href;
-    uri = Uri.parse(href);
-  } else {
-    try {
-      final initialLink = await getInitialLink();
-      if (initialLink != null) {
-        uri = Uri.parse(initialLink);
-      }
-    } on FormatException {
-      logger.i('Невалидный deep link');
-    }
+class _AuthPageState extends State<AuthPage> {
+
+  late UserRegistration userRegistration;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
   }
 
-  if (uri == null) return;
+  @override
+  void initState() {
+    super.initState();
+    userRegistration = UserRegistration();
+}
 
-  final token = uri.queryParameters['token'];
-  if (token == null) {
-    logger.i('Нет токена в ссылке');
-    return;
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _usernameController,
+          ),
+          TextFormField(
+            controller: _passwordController,
+            obscureText: true,
+          ),
+          TextButton(
+              onPressed: () async {
+                await userRegistration.getToken(
+                  _usernameController.text,
+                  _passwordController.text
+                );
+                context.go('/');
+              },
+              child: Text('Enter'))
+        ],
+      ),
+    );
   }
+
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterfitapp/auth/auth.dart';
 import 'package:flutterfitapp/pages/history/history.dart';
 import 'package:flutterfitapp/pages/history/history_detail.dart';
 import 'package:flutterfitapp/pages/practice/fast_practice.dart';
@@ -58,6 +59,12 @@ final _router = GoRouter(
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: RegistrationPage())
               : const RegistrationPage(),
+        ),
+        GoRoute(
+          path: 'login',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: AuthPage())
+              : const AuthPage(),
         ),
         GoRoute(
           path: 'programs',
