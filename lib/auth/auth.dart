@@ -32,28 +32,30 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          TextFormField(
-            controller: _usernameController,
-          ),
-          TextFormField(
-            controller: _passwordController,
-            obscureText: true,
-          ),
-          TextButton(
-              onPressed: () async {
-                await userRegistration.getToken(
-                  _usernameController.text,
-                  _passwordController.text
-                );
-                context.go('/');
-              },
-              child: Text('Enter'))
-        ],
-      ),
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: _usernameController,
+            ),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+            ),
+            TextButton(
+                onPressed: () async {
+                  await userRegistration.getToken(
+                    _usernameController.text,
+                    _passwordController.text
+                  );
+                  context.go('/');
+                },
+                child: Text('Enter'))
+          ],
+        ),
+      )
     );
   }
 

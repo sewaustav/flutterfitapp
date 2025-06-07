@@ -12,7 +12,6 @@ final _storage = FlutterSecureStorage();
 class ApiServiceHistory {
 
 
-  // final String _TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMjk2Mjc1LCJpYXQiOjE3NDg3MDQyNzUsImp0aSI6Ijk2Y2M5ZjQzN2UxNDQzZGJiMDQ4NmI0OTA1OWU5MjdhIiwidXNlcl9pZCI6N30.2sS5DsdYRvHaitj4n6od6dBET7tvllQAYJbyYxYJ_io';
   final String _URL = 'http://127.0.0.1:8888/api/api/workout_result';
 
   Future<List<dynamic>> getNameTraining(int user) async {

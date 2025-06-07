@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/auth/auth.dart';
+import 'package:flutterfitapp/auth/extra_info/add_goal.dart';
+import 'package:flutterfitapp/auth/extra_info/add_info.dart';
 import 'package:flutterfitapp/pages/history/history.dart';
 import 'package:flutterfitapp/pages/history/history_detail.dart';
 import 'package:flutterfitapp/pages/practice/fast_practice.dart';
@@ -77,6 +79,18 @@ final _router = GoRouter(
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: ProfilePage())
               : const ProfilePage(),
+        ),
+        GoRoute(
+          path: 'add-goal',
+          builder: (context, state) =>kIsWeb
+            ? const WebMobileWrapper(child: AddGoalPage())
+            : const AddGoalPage(),
+        ),
+        GoRoute(
+          path: 'add-info',
+          builder: (context, state) =>kIsWeb
+              ? const WebMobileWrapper(child: AddExtraInfo())
+              : const AddExtraInfo(),
         ),
         GoRoute(
           path: 'other',

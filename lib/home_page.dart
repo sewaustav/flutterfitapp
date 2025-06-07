@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
       final response = await http.get(
         Uri.parse('http://127.0.0.1:8888/api/api/exercise/'),
         headers: {
-          'Authorization': 'Bearer $_TOKEN',
+          // 'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         }
