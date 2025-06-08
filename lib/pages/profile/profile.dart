@@ -13,16 +13,22 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   late ApiProfile apiProfile;
+  late Goals goals;
+  late GetInfo getInfo;
 
   @override
   void initState() {
     super.initState();
     apiProfile = ApiProfile();
+    goals = Goals();
+    getInfo = GetInfo();
     _init();
   }
 
   Future<void> _init() async {
     List<dynamic> profileInfo = await apiProfile.getProfileInfo();
+    List<dynamic> userGoals = await goals.getGoals();
+    List<dynamic> userInfo = await getInfo.getExtraInfo();
   }
 
   @override

@@ -57,7 +57,7 @@ final _router = GoRouter(
               : const ExercisePage(),
         ),
         GoRoute(
-          path: 'registration',
+          path: 'sign-in',
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: RegistrationPage())
               : const RegistrationPage(),
