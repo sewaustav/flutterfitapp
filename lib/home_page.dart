@@ -151,9 +151,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         StartTrainButton(),
-                        TextButton(onPressed: () =>
-                            context.go('/reg'),
-                            child: Text('CLICK')),
+
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           padding: const EdgeInsets.all(16),
@@ -208,7 +206,7 @@ class StartTrainButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               )
             ),
-            child: Text("Let's go train!", style: TextStyle(color: Colors.white),)
+            child: Text("Start fast", style: TextStyle(color: Colors.white),)
           ),
         )
     );

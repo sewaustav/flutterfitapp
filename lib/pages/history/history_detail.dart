@@ -89,103 +89,339 @@ class _WorkoutDetailPageState extends State<WorkoutDetailPage> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: Colors.grey[50],
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-          ? Center(child: Text(_errorMessage))
-          : _exercises.isEmpty
           ? const Center(
-        child: Text(
-          'Нет данных о выполненных упражнениях',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(MyColors.blue_color),
         ),
       )
-          : ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _exercises.length,
-        itemBuilder: (context, index) {
-          return _buildExerciseCard(_exercises[index]);
-        },
-      ),
-    );
-  }
-
-  Widget _buildExerciseCard(Map<String, dynamic> exercise) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 2,
-      child: Padding(
+          : _errorMessage.isNotEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red[300],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.red[600],
+              ),
+            ),
+          ],
+        ),
+      )
+          : _exercises.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.fitness_center_outlined,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No workout data available',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Complete a workout to see your history here',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      )
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              exercise['exercise_name'] ?? 'Упражнение',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [MyColors.blue_color.withOpacity(0.1), Colors.transparent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: MyColors.blue_color.withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.analytics_outlined,
+                    color: MyColors.blue_color,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Workout Summary',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${_exercises.length} exercises completed',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            ..._buildSetsTable(exercise['sets']),
+            const SizedBox(height: 20),
+            ...List.generate(_exercises.length, (index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _buildExerciseCard(_exercises[index], index + 1),
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildSetsTable(List<dynamic> sets) {
-    return [
-      const Row(
+  Widget _buildExerciseCard(Map<String, dynamic> exercise, int exerciseNumber) {
+    final sets = exercise['sets'] as List<dynamic>;
+    final totalSets = sets.length;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
         children: [
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Подход',
-              style: TextStyle(fontWeight: FontWeight.bold),
+          // Exercise Header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  MyColors.blue_color.withOpacity(0.05),
+                  Colors.transparent,
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: MyColors.blue_color,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$exerciseNumber',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        exercise['exercise_name'] ?? 'Exercise',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$totalSets ${totalSets == 1 ? 'set' : 'sets'} completed',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.fitness_center,
+                  color: MyColors.blue_color.withOpacity(0.6),
+                  size: 20,
+                ),
+              ],
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              'Повторения',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              'Вес (кг)',
-              style: TextStyle(fontWeight: FontWeight.bold),
+
+          // Sets Table
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                // Table Header
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Text(
+                          'Set',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Reps',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Weight (kg)',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Table Rows
+                ...sets.asMap().entries.map<Widget>((entry) {
+                  final index = entry.key;
+                  final set = entry.value;
+                  final isLastRow = index == sets.length - 1;
+
+                  return Container(
+                    margin: EdgeInsets.only(bottom: isLastRow ? 0 : 8),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey[200]!,
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: MyColors.blue_color.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              set['set'].toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: MyColors.blue_color,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            set['reps'].toString(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            set['weight']?.toString() ?? '-',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: set['weight'] != null ? Colors.black87 : Colors.grey[400],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ],
             ),
           ),
         ],
       ),
-      const Divider(height: 16, thickness: 1),
-      ...sets.map<Widget>((set) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Text(set['set'].toString()),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(set['reps'].toString()),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(set['weight']?.toString() ?? '-'),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    ];
+    );
   }
 }

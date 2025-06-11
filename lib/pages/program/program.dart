@@ -94,7 +94,7 @@ class _ProgramPageState extends State<ProgramPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Создать новую программу',
+                          'Create a new program',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -103,7 +103,7 @@ class _ProgramPageState extends State<ProgramPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Добавьте персональную тренировку',
+                          'Add a personal program',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -124,7 +124,7 @@ class _ProgramPageState extends State<ProgramPage> {
                       ),
                     ),
                     child: Text(
-                      'Создать',
+                      'Create',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                       ),
@@ -139,7 +139,7 @@ class _ProgramPageState extends State<ProgramPage> {
               Padding(
                 padding: EdgeInsets.only(left: 4, bottom: 16),
                 child: Text(
-                  'Ваши программы (${programs.length})',
+                  'Your programs (${programs.length})',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -170,7 +170,7 @@ class _ProgramPageState extends State<ProgramPage> {
                       ),
                       SizedBox(height: 24),
                       Text(
-                        'Пока нет программ',
+                        'There are no programs yet',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -179,7 +179,7 @@ class _ProgramPageState extends State<ProgramPage> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Создайте первую программу тренировок',
+                        'Create your first program',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[500],
@@ -285,7 +285,7 @@ class _ProgramPageState extends State<ProgramPage> {
                                               children: [
                                                 Icon(Icons.edit_outlined, size: 18, color: Colors.grey[600]),
                                                 SizedBox(width: 12),
-                                                Text('Редактировать'),
+                                                Text('Edit'),
                                               ],
                                             ),
                                           ),
@@ -295,7 +295,7 @@ class _ProgramPageState extends State<ProgramPage> {
                                               children: [
                                                 Icon(Icons.delete_outline, size: 18, color: Colors.red[400]),
                                                 SizedBox(width: 12),
-                                                Text('Удалить', style: TextStyle(color: Colors.red[400])),
+                                                Text('Delete', style: TextStyle(color: Colors.red[400])),
                                               ],
                                             ),
                                           ),
@@ -331,7 +331,7 @@ class _ProgramPageState extends State<ProgramPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    program['description'] ?? 'Описание не добавлено',
+                                    program['description'] ?? 'Description is empty',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey[600],
@@ -364,7 +364,7 @@ class _ProgramPageState extends State<ProgramPage> {
                                         Icon(Icons.play_arrow, size: 20),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Начать тренировку',
+                                          'Start session',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 15,
