@@ -14,9 +14,6 @@ class RefreshToken {
     try {
       final response = await http.post(
         Uri.parse('http://127.0.0.1:8888/accounts/api/token/refresh/'),
-        headers: {
-          'Content-Type': 'application/json'
-        },
         body: {
           'refresh_token': _RTOKEN
         }

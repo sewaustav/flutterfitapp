@@ -22,6 +22,7 @@ class ApiProfile {
       );
       if (response.statusCode == 200) {
         final List<dynamic> profileInfo = jsonDecode(utf8.decode(response.bodyBytes));
+        logger.i(profileInfo);
         return profileInfo;
       }
       else {
@@ -51,6 +52,7 @@ class Goals {
       );
       if (response.statusCode == 200) {
         final List<dynamic> goalsList = jsonDecode(utf8.decode(response.bodyBytes));
+        logger.i(goalsList);
         return goalsList;
       }
       else {
@@ -146,6 +148,34 @@ class GetInfo {
     }
     catch (e) {
       logger.i(e);
+    }
+  }
+
+}
+
+class Practices {
+
+  Future<int> getNumberPractices() async {
+    try {
+      String? _TOKEN = await _storage.read(key: 'access');
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8888/api/api/workout_result/'),
+        headers: {
+          'Authorization': 'Bearer $_TOKEN',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> listOfPractices = json.decode(utf8.decode(response.bodyBytes));
+        logger.i(listOfPractices.length);
+        return listOfPractices.length;
+      }
+      return 0;
+    }
+    catch (e) {
+      logger.i(e);
+      return 0;
     }
   }
 
