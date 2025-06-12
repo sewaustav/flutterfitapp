@@ -69,7 +69,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     for (int i = 0; i < _workoutFields.length; i++) {
       workoutData.add({
         'program': widget.programId,
-        'exercise': _selectedExercises[i].text,
+        'exercise': _selectedExercises[i]?.id,
         'sets': _setsControllers[i].text,
         'reps': _repsControllers[i].text,
         'weight': _weightControllers[i].text,
