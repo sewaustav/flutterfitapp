@@ -137,7 +137,7 @@ class _ProgramEditPageState extends State<ProgramEditPage> {
     }
     try {
       for (final workout in workoutData) {
-        postDataMethods.submitWorkoutData(workout);
+        await postDataMethods.submitWorkoutData(workout);
       }
       context.go('/programs');
     }
