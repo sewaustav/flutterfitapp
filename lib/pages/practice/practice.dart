@@ -297,7 +297,7 @@ class _PracticePageState extends State<PracticePage> {
                     });
                   }
                   logger.i(data);
-                  apiService.postTrainingSet(tr_id, data);
+                  await apiService.postTrainingSet(tr_id, data);
                 }
                 else {
                   logger.i('Error');
