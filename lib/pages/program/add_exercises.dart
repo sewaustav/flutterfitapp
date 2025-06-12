@@ -69,7 +69,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     for (int i = 0; i < _workoutFields.length; i++) {
       workoutData.add({
         'program': widget.programId,
-        'exercise': _setsControllers[i].text,
+        'exercise': _selectedExercises[i].text,
         'sets': _setsControllers[i].text,
         'reps': _repsControllers[i].text,
         'weight': _weightControllers[i].text,
@@ -78,7 +78,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
 
     try {
       for (final workout in workoutData) {
-        postDataMethods.submitWorkoutData(workout);
+        await postDataMethods.submitWorkoutData(workout);
       }
       context.go('/programs');
 
