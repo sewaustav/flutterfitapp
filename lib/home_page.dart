@@ -75,11 +75,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchExercises() async {
     try {
-      String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
         Uri.parse('http://127.0.0.1:8888/api/api/exercise/'),
         headers: {
-          // 'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         }
