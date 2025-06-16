@@ -14,14 +14,24 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   late ApiProfile apiProfile;
   late Goals goals;
   late GetInfo getInfo;
   late Practices practices;
+
   Map<String, dynamic>? profileInfo;
-  List<dynamic>? userGoals;
   Map<String, dynamic>? userInfo;
+
+  List<dynamic>? userGoals;
+
+  String userBmi = '';
+
   int countPractice = 0;
+
+  double userHeight = 0;
+  double userWeight = 0;
+
 
   @override
   void initState() {
@@ -42,6 +52,9 @@ class _ProfilePageState extends State<ProfilePage> {
       profileInfo = profileInfoData[0];
       userGoals = userGoalsData;
       countPractice = countPracticeData;
+      userHeight = userInfoData[0]['height'];
+      userWeight = userInfoData[0]['weight'];
+      userBmi = (userWeight / ((userHeight/100)*(userHeight/100))).toStringAsFixed(2);
     });
   }
 
@@ -136,11 +149,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildMetricRow('Height', '178 cm', human),
+                    _buildMetricRow('Height', '$userHeight', human),
                     const SizedBox(height: 12),
-                    _buildMetricRow('Weight', '72 kg', weight),
+                    _buildMetricRow('Weight', '$userWeight', weight),
                     const SizedBox(height: 12),
-                    _buildMetricRow('BMI', '22.7', bmi),
+                    _buildMetricRow('BMI', '$userBmi', bmi),
                     const SizedBox(height: 20),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),

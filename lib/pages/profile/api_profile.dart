@@ -118,8 +118,9 @@ class GetInfo {
           'Accept': 'application/json',
         }
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode ==   200) {
         final List<dynamic> extraInfoList = jsonDecode(utf8.decode(response.bodyBytes));
+        logger.i(extraInfoList);
         return extraInfoList;
       }
       else {

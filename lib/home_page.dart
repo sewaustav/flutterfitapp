@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterfitapp/auth/token_script.dart';
 import 'package:flutterfitapp/design/colors.dart';
+import 'package:flutterfitapp/pages/profile/api_profile.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/design/images.dart';
@@ -12,7 +13,6 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 final logger = Logger();
-final _storage = FlutterSecureStorage();
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,8 +24,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   List<Exercise> exercises = [];
+
+  int countPractices = 0;
+
   late Box<Exercise> exerciseBox;
   late RefreshToken refreshToken;
+  late Practices practices;
 
   Future<void> _getKeys() async {
     bool containsKeyAccess= await _storage.containsKey(key: 'accept');
@@ -51,16 +55,25 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _initHive().then((_) => fetchExercises());
     refreshToken = RefreshToken();
+    practices = Practices();
     _getKeys();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    int getterCountPractises = await practices.getNumberPractices();
+    setState(() {
+      countPractices = getterCountPractises;
+    });
   }
 
   Future<bool> checkValidToken() async {
     String? access = await _storage.read(key: 'access');
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8888/accounts/api/profile/'),
-      headers: {
-        'Authorization': 'Bearer $access'
-      }
+        Uri.parse('http://127.0.0.1:8888/accounts/api/profile/'),
+        headers: {
+          'Authorization': 'Bearer $access'
+        }
     );
     return response.statusCode == 200;
   }
@@ -76,11 +89,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchExercises() async {
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/api/api/exercise/'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }
+          Uri.parse('http://127.0.0.1:8888/api/api/exercise/'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          }
       );
 
       if (response.statusCode == 200) {
@@ -106,10 +119,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Home', style:TextStyle(
-            color: Colors.white,
-          )),
-          backgroundColor: MyColors.blue_color,
+        title: Text('Home', style:TextStyle(
+          color: Colors.white,
+        )),
+        backgroundColor: MyColors.blue_color,
       ),
 
       body: Stack(
@@ -140,30 +153,41 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     child: Column(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            "Welcome to the DotFit!",
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              "Welcome to the DotFit!",
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        StartTrainButton(),
 
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(12),
+                          StartTrainButton(),
+
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.all(16),
+                            child: const Text(
+                              "Your Smart Workout Companion — Track your progress, get personalized AI-powered practice plans, and reach your fitness goals faster.",
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          child: const Text(
-                            "Your Smart Workout Companion — Track your progress, get personalized AI-powered practice plans, and reach your fitness goals faster..",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        SizedBox(height: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 32),
-                      ]
+
+                          // Next Workout Schedule Section - new feature in progress
+                          // NextWorkoutSection(),
+
+                          // Quick Stats Section
+                          QuickStatsSection(practicesCount: countPractices),
+
+                          // Quick Actions Section
+                          QuickActionsSection(),
+
+                          // Tools & Calculators Section
+                          ToolsSection(),
+
+                          SizedBox(height: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 32),
+                        ]
                     ),
                   ),
                 ],
@@ -174,8 +198,6 @@ class _HomePageState extends State<HomePage> {
       ),
 
       bottomNavigationBar: Navigation(),
-
-
     );
   }
 }
@@ -188,25 +210,350 @@ class StartTrainButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: SizedBox(
+            width: 150,
+            child: Column(
+                children: [
+                  TextButton(
+                      onPressed: () => context.go('/fast_practice'),
+                      style: TextButton.styleFrom(
+                          backgroundColor: MyColors.blue_color,
+                          padding: EdgeInsets.all(20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          )
+                      ),
+                      child: Text("Start fast", style: TextStyle(color: Colors.white),)
+                  ),
+                  const SizedBox(height: 5),
+                  Text('Start fast training')
+                ]
+            )
+        )
+    );
+  }
+}
+
+class NextWorkoutSection extends StatelessWidget {
+  const NextWorkoutSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Next Workout",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
+              Icon(Icons.schedule, color: MyColors.blue_color),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Push Day - Upper Body",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Tomorrow, 6:00 PM",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Duration: ~45 min",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // TODO: Navigate to workout preview
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: MyColors.blue_color.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: Text(
+                    "Preview",
+                    style: TextStyle(color: MyColors.blue_color),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class QuickStatsSection extends StatelessWidget {
+  final int practicesCount;
+
+  const QuickStatsSection({
+    super.key,
+    required this.practicesCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: MyColors.blue_color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "$practicesCount",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.blue_color,
+                    ),
+                  ),
+                  Text(
+                    "Workouts",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "ND",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  Text(
+                    "Time on fire",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class QuickActionsSection extends StatelessWidget {
+  const QuickActionsSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 12),
+            child: Text(
+              "Quick Actions",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionCard(
+                  context,
+                  "Browse Exercises",
+                  Icons.fitness_center,
+                      () => context.go('/exercise'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildActionCard(
+                  context,
+                  "View Programs",
+                  Icons.assignment,
+                      () => context.go('/programs'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionCard(BuildContext context, String title, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: MyColors.blue_color,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ToolsSection extends StatelessWidget {
+  const ToolsSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [MyColors.blue_color.withOpacity(0.1), Colors.purple.withOpacity(0.1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
-        child: SizedBox(
-          width: 150,
-          child: TextButton(
-            onPressed: () => context.go('/fast_practice'),
-            style: TextButton.styleFrom(
-              backgroundColor: MyColors.blue_color,
-              padding: EdgeInsets.all(20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              )
-            ),
-            child: Text("Start fast", style: TextStyle(color: Colors.white),)
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Tools & Calculators",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
+              Icon(Icons.calculate, color: MyColors.blue_color),
+            ],
           ),
-        )
+          const SizedBox(height: 8),
+          Text(
+            "BMI, 1RM, Body Fat % and more",
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () => context.go('/other'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                "Open Tools",
+                style: TextStyle(
+                  color: MyColors.blue_color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

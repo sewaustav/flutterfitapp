@@ -99,6 +99,12 @@ final _router = GoRouter(
               : const OtherPage(),
         ),
         GoRoute(
+          path: 'other/rm',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: OtherPage())
+              : const OtherPage(),
+        ),
+        GoRoute(
           path: 'history',
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: HistoryPage())

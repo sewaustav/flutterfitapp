@@ -89,7 +89,7 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
 
                     // Форма
                     Container(
@@ -169,7 +169,36 @@ class _AuthPageState extends State<AuthPage> {
                               ),
                             ),
 
-                            const SizedBox(height: 32),
+                            const SizedBox(height: 18),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account?",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // Navigate to the registration page
+                                    context.go('/sign-in'); // This will navigate to your sign-in/registration route
+                                  },
+                                  child: Text(
+                                    'Register',
+                                    style: TextStyle(
+                                      color: MyColors.blue_color,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold, // Make it bold for emphasis
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 20),
 
                             // Кнопка входа
                             SizedBox(
@@ -206,7 +235,8 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+
+                    const SizedBox(height: 14),
 
                     // Дополнительные ссылки (опционально)
                     TextButton(
@@ -221,6 +251,7 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ),
