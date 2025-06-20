@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                           ),
 
                           // Next Workout Schedule Section - new feature in progress
-                          // NextWorkoutSection(),
+                          NextWorkoutSection(),
 
                           // Quick Stats Section
                           QuickStatsSection(practicesCount: countPractices),
