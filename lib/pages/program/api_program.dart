@@ -109,10 +109,10 @@ class DeleteDataMethods {
     }
   }
 
-  Future<void> deleteProgramByName(String name) async {
+  Future<void> deleteProgramByName(int id) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      final url = Uri.parse('http://127.0.0.1:8888/api/api/programs/delete/$name');
+      final url = Uri.parse('http://127.0.0.1:8888/api/api/dprogram/$id/');
       logger.i(url);
       final response = await http.delete(
         url,

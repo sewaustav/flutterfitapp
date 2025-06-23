@@ -304,7 +304,7 @@ class _ProgramPageState extends State<ProgramPage> {
                                           if (value == 'edit') {
                                             context.push('/edit_training', extra: program['id']);
                                           } else if (value == 'delete') {
-                                            await deleteDataMethods.deleteProgramByName(program['name']);
+                                            await deleteDataMethods.deleteProgramByName(program['id']);
                                             final programList = await getDataMethods.getProgramList();
                                             setState(() {
                                               programs = programList;
