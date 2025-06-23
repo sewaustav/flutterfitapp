@@ -4,6 +4,8 @@ import 'package:flutterfitapp/auth/extra_info/add_goal.dart';
 import 'package:flutterfitapp/auth/extra_info/add_info.dart';
 import 'package:flutterfitapp/pages/history/history.dart';
 import 'package:flutterfitapp/pages/history/history_detail.dart';
+import 'package:flutterfitapp/pages/other/tools/calories.dart';
+import 'package:flutterfitapp/pages/other/tools/rm.dart';
 import 'package:flutterfitapp/pages/practice/fast_practice.dart';
 import 'package:flutterfitapp/pages/practice/practice.dart';
 import 'package:flutterfitapp/pages/program/add_exercises.dart';
@@ -101,8 +103,14 @@ final _router = GoRouter(
         GoRoute(
           path: 'other/rm',
           builder: (context, state) => kIsWeb
-              ? const WebMobileWrapper(child: OtherPage())
-              : const OtherPage(),
+              ? const WebMobileWrapper(child: CalculateRmPage())
+              : const CalculateRmPage(),
+        ),
+        GoRoute(
+          path: 'other/nut',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: CalculateNut())
+              : const CalculateNut(),
         ),
         GoRoute(
           path: 'history',

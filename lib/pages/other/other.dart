@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:flutterfitapp/pages/other/methods.dart';
+import 'package:go_router/go_router.dart';
 
 class OtherPage extends StatefulWidget {
   const OtherPage({super.key});
@@ -53,7 +54,7 @@ class _OtherPageState extends State<OtherPage> {
               elevation: 4,
               margin: EdgeInsets.only(bottom: 16),
               child: InkWell(
-                onTap: null,
+                onTap: () => context.go('/other/rm'),
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: EdgeInsets.all(20),
@@ -193,7 +194,7 @@ class _OtherPageState extends State<OtherPage> {
             Card(
               elevation: 4,
               child: InkWell(
-                onTap: null,
+                onTap: () => context.go('/other/nut'),
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: EdgeInsets.all(20),
