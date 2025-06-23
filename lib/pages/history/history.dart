@@ -290,6 +290,43 @@ class _HistoryPageState extends State<HistoryPage> {
                   ],
                 ),
               ),
+              if (workout['duration'] != null || workout['tonnage'] != null)
+                Row(
+                  children: [
+                    if (workout['duration'] != null) ...[
+                      Icon(
+                        Icons.timer_outlined,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${double.parse(workout['duration'])~/60} min',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+                    if (workout['tonnage'] != null) ...[
+                      Icon(
+                        Icons.fitness_center_outlined,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${workout['tonnage']} kg',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+
             ],
 
             const SizedBox(height: 16),
