@@ -15,6 +15,10 @@ import 'package:flutterfitapp/pages/program/program_view.dart';
 import 'package:flutterfitapp/pages/program_app/exercise.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
 import 'package:flutterfitapp/pages/program_app/list_exercise.dart';
+import 'package:flutterfitapp/pages/schedule/add_schedule.dart';
+import 'package:flutterfitapp/pages/schedule/edit_schedule.dart';
+import 'package:flutterfitapp/pages/schedule/schedule.dart';
+import 'package:flutterfitapp/pages/schedule/view_schedule.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/pages/program/program.dart';
@@ -75,6 +79,34 @@ final _router = GoRouter(
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: ProgramPage())
               : const ProgramPage(),
+        ),
+        GoRoute(
+          path: 'schedule',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: SchedulePage())
+              : const SchedulePage(),
+        ),
+        GoRoute(
+          path: 'schedule/add',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: CreateWorkoutPage())
+              : const CreateWorkoutPage(),
+        ),
+        GoRoute(
+          path: 'schedule/view',
+          builder: (context, state) {
+            final programId = state.extra as int;
+            final page = FuturePracticeViewPage(programId: programId.toString());
+            return kIsWeb ? WebMobileWrapper(child: page) : page;
+          },
+        ),
+        GoRoute(
+          path: 'schedule/edit',
+          builder: (context, state) {
+            final programId = state.extra as int;
+            final page = FuturePracticeEditPage(programId: programId.toString());
+            return kIsWeb ? WebMobileWrapper(child: page) : page;
+          },
         ),
         GoRoute(
           path: 'profile',
