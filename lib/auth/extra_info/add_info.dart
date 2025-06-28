@@ -7,7 +7,8 @@ import 'package:logger/logger.dart';
 import '../../design/colors.dart';
 
 class AddExtraInfo extends StatefulWidget {
-  const AddExtraInfo({super.key});
+  const AddExtraInfo({super.key, required this.go});
+  final String go;
 
   @override
   State<AddExtraInfo> createState() => _AddExtraInfoState();
@@ -223,7 +224,11 @@ class _AddExtraInfoState extends State<AddExtraInfo> {
                         'weight': _weightController.text,
                         'height': _heightController.text
                       });
-                      context.push('/add-goal');
+                      if (widget.go == '1') {
+                        context.push('/add-goal');
+                      } else {
+                        context.go('/profile');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: MyColors.blue_color,

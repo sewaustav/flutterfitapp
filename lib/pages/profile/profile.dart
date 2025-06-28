@@ -158,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       child: ElevatedButton.icon(
-                        onPressed: () => context.push('/add-info'),
+                        onPressed: () => context.push('/add-info', extra: 0),
                         icon: const Icon(Icons.add, size: 20),
                         label: const Text(
                           'Change data',

@@ -217,7 +217,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               logger.i(token);
                             }
                           }
-                          context.push('/add-info');
+                          context.push('/add-info', extra: 1);
                         }
                       },
                       style: ElevatedButton.styleFrom(
