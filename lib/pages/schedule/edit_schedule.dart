@@ -21,7 +21,9 @@ class FuturePracticeEditPage extends StatefulWidget {
 class _FuturePracticeEditPageState extends State<FuturePracticeEditPage> with TickerProviderStateMixin {
 
   late PutMethod putMethod;
+  late DeleteMethods deleteMethods;
   late GetMethods getMethods;
+  late PostMethods postMethods;
   late AnimationController _animationController;
 
   List<dynamic> exercises = [];
@@ -32,6 +34,8 @@ class _FuturePracticeEditPageState extends State<FuturePracticeEditPage> with Ti
   void initState() {
     super.initState();
     _init();
+    postMethods = PostMethods();
+    deleteMethods = DeleteMethods();
     exerciseBox = Hive.box<Exercise>('exercises');
     allExercises = exerciseBox.values.toList();
     _animationController = AnimationController(
@@ -127,35 +131,30 @@ class _FuturePracticeEditPageState extends State<FuturePracticeEditPage> with Ti
   }
 
   Future<void> _updateProgram() async {
+    List<Map<String, dynamic>> workoutData = [];
     try {
       for (int i = 0; i < _workoutFields.length; i++) {
-        final workoutData = {
-          'program': widget.programId,
+        workoutData.add({
+          'workout': widget.programId,
           'exercise': _selectedExercises[i]?.id,
-          'sets': int.tryParse(_setsControllers[i].text) ?? 0,
-          'reps': int.tryParse(_repsControllers[i].text) ?? 0,
-        };
-
-        final exerciseId = _workoutFields[i]['id'];
-
-        if (exerciseId != null) {
-          // Update existing exercise
-          await putMethod.updateProgramExById(exerciseId, workoutData);
-          logger.i('Updated exercise with ID: $exerciseId');
-        } else {
-          // For new exercises, you might need a POST method
-          // This depends on your API structure
-          logger.i('New exercise needs to be created: $workoutData');
-        }
+          'sets': _setsControllers[i].text,
+          'reps': _repsControllers[i].text,
+        });
       }
 
-      // Navigate to schedule page on success
+      for (int i = 0; i < exercises.length; i++) {
+        await deleteMethods.cleanSpace(exercises[i]['id']);
+      }
+
+      postMethods.postNextTrainingSet(workoutData);
+
+
       if (mounted) {
         context.go('/schedule');
       }
+
     } catch (e) {
-      logger.e('Error updating program: $e');
-      // You might want to show an error dialog here
+      logger.e('Error in _updateProgramWithCleanAndPost: $e');
     }
   }
 

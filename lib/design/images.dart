@@ -10,6 +10,8 @@ final SvgPicture history = SvgPicture.asset('assets/images/history.svg');
 
 final SvgPicture ai = SvgPicture.asset('assets/images/ai.svg');
 
+final SvgPicture calendar = SvgPicture.asset('assets/images/calendar.svg');
+
 final SvgPicture human = SvgPicture.asset(
     'assets/images/human.svg',
     width: 28,

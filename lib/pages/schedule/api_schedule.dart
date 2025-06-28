@@ -176,6 +176,29 @@ class DeleteMethods {
       logger.i(e);
     }
   }
+  
+  Future<int> cleanSpace(int id) async {
+    try {
+      String? _TOKEN = await _storage.read(key: 'access');
+      final response = await http.delete(
+        Uri.parse('$_URL/schedule_exercises/$id/'),
+        headers: {
+          'Authorization': 'Bearer $_TOKEN'
+        }
+      );
+      logger.i(response.statusCode);
+      if (response.statusCode == 204) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    }
+    catch (e) {
+      logger.i(e);
+      return 0;
+    };
+  }
 
 }
 

@@ -2,15 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:flutterfitapp/auth/token_script.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:flutterfitapp/pages/profile/api_profile.dart';
 import 'package:flutterfitapp/pages/program_app/exercise_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutterfitapp/design/images.dart';
+import 'package:flutterfitapp/pages/schedule/api_schedule.dart';
+
 import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+
 
 final logger = Logger();
 
@@ -24,12 +28,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   List<Exercise> exercises = [];
+  Map<String, dynamic> nextTrainingInfo = {};
 
   int countPractices = 0;
 
   late Box<Exercise> exerciseBox;
   late RefreshToken refreshToken;
   late Practices practices;
+  late GetMethods getMethods;
 
   Future<void> _getKeys() async {
     bool containsKeyAccess= await _storage.containsKey(key: 'accept');
@@ -56,14 +62,17 @@ class _HomePageState extends State<HomePage> {
     _initHive().then((_) => fetchExercises());
     refreshToken = RefreshToken();
     practices = Practices();
+    getMethods = GetMethods();
     _getKeys();
     loadData();
   }
 
   Future<void> loadData() async {
     int getterCountPractises = await practices.getNumberPractices();
+    Map<String, dynamic> info = await getMethods.getNextPractice();
     setState(() {
       countPractices = getterCountPractises;
+      nextTrainingInfo = info;
     });
   }
 
@@ -164,6 +173,8 @@ class _HomePageState extends State<HomePage> {
 
                           StartTrainButton(),
 
+                          
+
                           Container(
                             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             padding: const EdgeInsets.all(16),
@@ -174,8 +185,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
 
+                          SizedBox(height: 16),
+
                           // Next Workout Schedule Section - new feature in progress
-                          NextWorkoutSection(),
+                          NextWorkoutSection(nextTrainingInfo: nextTrainingInfo),
 
                           // Quick Stats Section
                           QuickStatsSection(practicesCount: countPractices),
@@ -240,7 +253,9 @@ class StartTrainButton extends StatelessWidget {
 }
 
 class NextWorkoutSection extends StatelessWidget {
-  const NextWorkoutSection({super.key});
+  final dynamic nextTrainingInfo;
+
+  const NextWorkoutSection({super.key, required this.nextTrainingInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +298,7 @@ class NextWorkoutSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Push Day - Upper Body",
+                        "${nextTrainingInfo['name']}",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -291,26 +306,28 @@ class NextWorkoutSection extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "Tomorrow, 6:00 PM",
+                        nextTrainingInfo['date'] != null
+                            ? "${DateTime.parse(nextTrainingInfo['date']).toIso8601String().split('T')[0]}"
+                            : '',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        "Duration: ~45 min",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[500],
-                        ),
-                      ),
+                      // Text(
+                      //   "Duration: ~45 min",
+                      //   style: TextStyle(
+                      //     fontSize: 12,
+                      //     color: Colors.grey[500],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
                 TextButton(
                   onPressed: () {
-                    // TODO: Navigate to workout preview
+                    context.push('/schedule/view', extra: nextTrainingInfo['id']);
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: MyColors.blue_color.withOpacity(0.1),
@@ -576,7 +593,7 @@ class Navigation extends StatelessWidget {
             context.go('/programs');
             break;
           case 1:
-            context.go('/exercise');
+            context.go('/schedule');
             break;
           case 2:
             context.go('/history');
@@ -592,8 +609,8 @@ class Navigation extends StatelessWidget {
           label: 'Programs',
         ),
         BottomNavigationBarItem(
-          icon: dumbell,
-          label: 'Exercises',
+          icon: calendar,
+          label: 'Schedule',
         ),BottomNavigationBarItem(
           icon: history,
           label: 'History',

@@ -115,16 +115,18 @@ final _router = GoRouter(
               : const ProfilePage(),
         ),
         GoRoute(
-          path: 'add-goal',
-          builder: (context, state) =>kIsWeb
-            ? const WebMobileWrapper(child: AddGoalPage())
-            : const AddGoalPage(),
+          path: 'add-info',
+          builder: (context, state) {
+            final go = state.extra as int;
+            final page = AddExtraInfo(go: go.toString());
+            return kIsWeb ? WebMobileWrapper(child: page) : page;
+          }
         ),
         GoRoute(
-          path: 'add-info',
+          path: 'add-goal',
           builder: (context, state) =>kIsWeb
-              ? const WebMobileWrapper(child: AddExtraInfo())
-              : const AddExtraInfo(),
+              ? const WebMobileWrapper(child: AddGoalPage())
+              : const AddGoalPage(),
         ),
         GoRoute(
           path: 'other',
