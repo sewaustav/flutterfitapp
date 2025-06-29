@@ -25,11 +25,10 @@ import 'package:flutterfitapp/pages/program/program.dart';
 import 'package:flutterfitapp/pages/other/other.dart';
 import 'package:flutterfitapp/pages/profile/profile.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'auth/google.dart';
 import 'auth/registration.dart';
 import 'home_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
-
 
 
 void main() async{
@@ -45,6 +44,9 @@ void main() async{
 
 final _router = GoRouter(
   initialLocation: '/',
+  errorBuilder: (context, state) => kIsWeb
+      ? const WebMobileWrapper(child: AuthService())
+      : const AuthService(),
   routes: [
     GoRoute(
       path: '/',
@@ -73,6 +75,12 @@ final _router = GoRouter(
           builder: (context, state) => kIsWeb
               ? const WebMobileWrapper(child: AuthPage())
               : const AuthPage(),
+        ),
+        GoRoute(
+          path: 'auth-google',
+          builder: (context, state) => kIsWeb
+              ? const WebMobileWrapper(child: AuthService())
+              : const AuthService(),
         ),
         GoRoute(
           path: 'programs',

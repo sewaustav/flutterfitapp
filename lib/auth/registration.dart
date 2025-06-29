@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../design/colors.dart';
 import 'api_auth.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+final _storage = FlutterSecureStorage();
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -15,10 +21,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
   late UserRegistration userRegistration;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  Future<void> login() async {
+    try {
+      final uri = Uri.base;
+
+      if (uri.path == '/auth-google/') {
+        final access = uri.queryParameters['access_token'];
+        final refresh = uri.queryParameters['refresh_token'];
+
+        if (access != null && refresh != null) {
+          logger.i(access);
+          await _storage.write(key: 'access', value: access);
+          await _storage.write(key: 'refresh', value: refresh);
+        }
+      }
+    } catch(e) {
+      null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     userRegistration = UserRegistration();
+    login();
   }
 
   final _usernameInput = TextEditingController();
@@ -33,6 +59,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _password1.dispose();
     _password2.dispose();
     _emailInput.dispose();
+  }
+
+  Future<void> authGoogle() async {
+    final Uri url = Uri.parse('http://127.0.0.1:8888/accounts/api/google-auth/');
+
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.inAppWebView, // используем встроенный WebView
+      webViewConfiguration: const WebViewConfiguration(
+        enableJavaScript: true,
+      ),
+    )) {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -243,7 +283,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   // Кнопка регистрации через Google
                   OutlinedButton.icon(
                     onPressed: () {
-                      // Пустое действие для регистрации через Google
+                      authGoogle();
+                      // context.go('/auth-google');
                     },
                     icon: Icon(Icons.g_mobiledata, color: Colors.red, size: 24),
                     label: Text(

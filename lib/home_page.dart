@@ -47,6 +47,10 @@ class _HomePageState extends State<HomePage> {
       final bool isValid = await checkValidToken();
       if (isValid) {
         await refreshToken.getNewAccessToken();
+        Map<String, dynamic> info = await getMethods.getNextPractice();
+        setState(() {
+          nextTrainingInfo = info;
+        });
       }
       else {
         context.go('/login');

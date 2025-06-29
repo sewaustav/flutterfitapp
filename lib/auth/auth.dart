@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import '../design/colors.dart';
 import 'api_auth.dart';
+
+final _storage = FlutterSecureStorage();
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -29,6 +32,26 @@ class _AuthPageState extends State<AuthPage> {
   void initState() {
     super.initState();
     userRegistration = UserRegistration();
+    login();
+  }
+
+  Future<void> login() async {
+    try {
+      final uri = Uri.base;
+
+      if (uri.path == '/auth-google/') {
+        final access = uri.queryParameters['access_token'];
+        final refresh = uri.queryParameters['refresh_token'];
+
+        if (access != null && refresh != null) {
+          logger.i(access);
+          await _storage.write(key: 'access', value: access);
+          await _storage.write(key: 'refresh', value: refresh);
+        }
+      }
+    } catch(e) {
+      null;
+    }
   }
 
   @override
