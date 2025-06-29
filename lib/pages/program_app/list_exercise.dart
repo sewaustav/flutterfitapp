@@ -27,14 +27,14 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyColors.blue_color,
-        title: Text('Список упражнений', style:
+        title: Text('List exercises', style:
         TextStyle(
           color: Colors.white,
           fontSize: 16,
         ),),
       ),
       body: exercises.isEmpty
-          ? const Center(child: Text('Нет истории упражнений'))
+          ? const Center(child: Text('Empty'))
           : ListView.builder(
         itemCount: exercises.length,
         itemBuilder: (context, index) {
@@ -54,7 +54,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
                   children: [
                     Icon(Icons.emoji_people, size: 16, color: Colors.grey),
                     SizedBox(width: 8),
-                    Text('Основная группа: ${exercise.muscleGroup}'),
+                    Text('Main group: ${exercise.muscleGroup}'),
                   ],
                 ),
                 if (exercise.secondGroup != null) ...[
@@ -63,7 +63,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
                     children: [
                       Icon(Icons.people_outline, size: 16, color: Colors.grey),
                       SizedBox(width: 8),
-                      Text('Доп. группа: ${exercise.secondGroup}'),
+                      Text('Additional group: ${exercise.secondGroup}'),
                     ],
                   ),
                 ],
@@ -73,7 +73,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
                     children: [
                       Icon(Icons.star, size: 16, color: Colors.amber),
                       SizedBox(width: 8),
-                      Text('Рейтинг: ${exercise.rating}'),
+                      Text('Rating: ${exercise.rating}'),
                     ],
                   ),
                 ],
@@ -82,7 +82,14 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+
+        },
+        backgroundColor: MyColors.blue_color,
+        child: Icon(Icons.add, color: Colors.white),
+        tooltip: 'Add Exercise',
+      ),
     );
   }
-
 }
