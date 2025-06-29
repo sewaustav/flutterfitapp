@@ -58,5 +58,23 @@ class ApiExtraInfo {
     }
   }
 
+  Future<void> completeGoal(int id) async {
+    try {
+      String? _TOKEN = await _storage.read(key: 'access');
+      logger.i(id);
+      final response = await http.patch(
+        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/$id/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_TOKEN'
+        },
+        body: jsonEncode({'status': true})
+      );
+      logger.i(response.statusCode);
+    } catch (e) {
+      logger.i(e);
+    }
+  }
+
 
 }

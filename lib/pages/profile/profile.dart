@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfitapp/auth/extra_info/api_info.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:flutterfitapp/pages/profile/api_profile.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutterfitapp/design/images.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late Goals goals;
   late GetInfo getInfo;
   late Practices practices;
+  late ApiExtraInfo apiExtraInfo;
 
   Map<String, dynamic>? profileInfo;
   Map<String, dynamic>? userInfo;
@@ -32,6 +37,10 @@ class _ProfilePageState extends State<ProfilePage> {
   double userHeight = 0;
   double userWeight = 0;
 
+  // Variables for goal management
+  int? selectedGoalId;
+  String selectedGoalTitle = '';
+  String selectedGoalDeadline = '';
 
   @override
   void initState() {
@@ -40,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
     goals = Goals();
     getInfo = GetInfo();
     practices = Practices();
+    apiExtraInfo = ApiExtraInfo();
     _init();
   }
 
@@ -60,6 +70,299 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void createGoal() {
     context.go('/add-goal');
+  }
+
+  Future<void> _showGoalManagementDialog(Map<String, dynamic> goalItem) async {
+    selectedGoalId = goalItem['id']; // Store goal ID
+    selectedGoalTitle = goalItem['goal'] ?? '';
+    selectedGoalDeadline = goalItem['final_day_of_goal'] ?? '';
+
+    final TextEditingController titleController = TextEditingController(text: selectedGoalTitle);
+    final TextEditingController deadlineController = TextEditingController(text: selectedGoalDeadline);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 8,
+          child: Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF327AED).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.flag_outlined,
+                        color: Color(0xFF327AED),
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Manage Goal',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close, color: Colors.grey[600]),
+                      splashRadius: 20,
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 24),
+
+                // Goal Title Input
+                Text(
+                  'Goal Title',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter goal title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Color(0xFF327AED), width: 2),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  onChanged: (value) {
+                    selectedGoalTitle = value;
+                  },
+                ),
+
+                SizedBox(height: 16),
+
+                // Deadline Input with Date Picker
+                Text(
+                  'Target Date',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: deadlineController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    hintText: 'Select target date',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Color(0xFF327AED), width: 2),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    suffixIcon: Icon(Icons.calendar_today_outlined, color: Colors.grey[500]),
+                  ),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(), // Ограничиваем выбор от сегодняшнего дня
+                      lastDate: DateTime.now().add(Duration(days: 365 * 5)), // Максимум 5 лет в будущее
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: Color(0xFF327AED), // Цвет заголовка и выбранной даты
+                              onPrimary: Colors.white, // Цвет текста на primary
+                              onSurface: Colors.black, // Цвет текста
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Color(0xFF327AED), // Цвет кнопок
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (pickedDate != null) {
+                      String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                      deadlineController.text = formattedDate;
+                      selectedGoalDeadline = formattedDate;
+                    }
+                  },
+                ),
+
+                SizedBox(height: 24),
+
+                // Action Buttons
+                Row(
+                  children: [
+                    // Complete Goal Button
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          await apiExtraInfo.completeGoal(selectedGoalId!);
+                          List<dynamic> userGoalsData = await goals.getGoals();
+                          logger.i('RRRRRRR$userGoalsData');
+                          setState(() {
+                            userGoals = userGoalsData;
+                          });
+                        },
+                        icon: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Icon(
+                            Icons.check,
+                            size: 12,
+                            color: Colors.green[600],
+                          ),
+                        ),
+                        label: Text(
+                          'Complete',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.green[600],
+                          elevation: 2,
+                          shadowColor: Colors.green.withOpacity(0.3),
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 12),
+
+                    // Update Goal Button
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          Map<String, dynamic> newData = {
+                            'goal': selectedGoalTitle,
+                            'final_day_of_goal': selectedGoalDeadline
+                          };
+                          await goals.updateGoals(newData, selectedGoalId!);
+                          List<dynamic> userGoalsData = await goals.getGoals();
+                          setState(() {
+                            userGoals = userGoalsData;
+                          });
+                        },
+                        icon: Icon(Icons.edit_outlined, size: 18),
+                        label: Text(
+                          'Update',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color(0xFF327AED),
+                          elevation: 2,
+                          shadowColor: Colors.blue.withOpacity(0.3),
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 12),
+
+                // Delete Goal Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await goals.deleteGoal(selectedGoalId!);
+                      List<dynamic> userGoalsData = await goals.getGoals();
+                      setState(() {
+                        userGoals = userGoalsData;
+                      });
+                    },
+                    icon: Icon(Icons.delete_outline, size: 18, color: Colors.red[600]),
+                    label: Text(
+                      'Delete Goal',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red[600],
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.red[300]!),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -282,16 +585,23 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ],
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFF327AED).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Color(0xFF327AED),
-                                size: 12,
+                            GestureDetector(
+                              onTap: () async {
+                                await _showGoalManagementDialog(goalItem);
+
+                              },
+
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF327AED).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Color(0xFF327AED),
+                                  size: 12,
+                                ),
                               ),
                             ),
                           ],
@@ -357,7 +667,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: () => context.push('/add-goal'),
                       icon: Icon(Icons.add, size: 20),
                       label: Text(
-                        'Добавить цель',
+                        'Add goal',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,

@@ -66,11 +66,11 @@ class Goals {
     }
   }
   
-  Future<void> updateGoals(Map<String, dynamic> data) async {
+  Future<void> updateGoals(Map<String, dynamic> data, int id) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      final response = await http.post(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/'),
+      final response = await http.put(
+        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/$id/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
