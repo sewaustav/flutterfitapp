@@ -173,8 +173,6 @@ class _HomePageState extends State<HomePage> {
 
                           StartTrainButton(),
 
-                          
-
                           Container(
                             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             padding: const EdgeInsets.all(16),
