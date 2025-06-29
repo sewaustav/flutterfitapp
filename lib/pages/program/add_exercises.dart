@@ -392,7 +392,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> with TickerProvider
                             onPressed: _submitWorkoutData,
                             icon: Icon(Icons.save, color: Colors.white),
                             label: Text(
-                              'Сохранить программу',
+                              'Save program',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
