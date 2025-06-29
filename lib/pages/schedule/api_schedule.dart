@@ -48,7 +48,7 @@ class GetMethods {
             'Accept': 'application/json',
           }
       );
-      logger.i(response.statusCode);
+      logger.i('Next${response.statusCode}');
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return data;

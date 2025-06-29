@@ -166,7 +166,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
           ),
         );
 
-        context.go('/schedule');
+        context.replace('/schedule');
       } else {
         throw Exception('Failed to create workout');
       }

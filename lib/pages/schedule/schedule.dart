@@ -23,20 +23,23 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   void initState() {
     super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
     getMethods = GetMethods();
     postMethods = PostMethods();
     deleteMethods = DeleteMethods();
+    _loadSchedule();
+  }
 
+  Future<void> _loadSchedule() async {
+    setState(() {
+      isLoading = true;
+    });
     final scheduleList = await getMethods.getSchedule();
     setState(() {
       schedules = scheduleList;
       isLoading = false;
     });
   }
+
 
   Future<void> _refreshSchedules() async {
     setState(() {
@@ -83,6 +86,11 @@ class _SchedulePageState extends State<SchedulePage> {
             color: Colors.white,
             fontSize: 16,
           ),
+
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.go('/'),
         ),
         actions: [
           IconButton(
