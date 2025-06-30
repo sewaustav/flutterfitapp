@@ -157,7 +157,7 @@ class DeleteMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.delete(
-          Uri.parse('$URL/schedule/$id/'),
+          Uri.parse('$URL/api/api/schedule/$id/'),
           headers: {
             'Authorization': 'Bearer $_TOKEN'
           }
@@ -177,7 +177,7 @@ class DeleteMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.delete(
-        Uri.parse('$URL/schedule_exercises/$id/'),
+        Uri.parse('$URL/api/api/schedule_exercises/$id/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN'
         }
