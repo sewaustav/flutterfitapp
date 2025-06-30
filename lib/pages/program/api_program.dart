@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+import '../../core/config.dart';
+
 final logger = Logger();
 
 final _storage = FlutterSecureStorage();
@@ -14,7 +16,7 @@ class GetDataMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/?program=${int.parse(programId)}'),
+        Uri.parse('$URL/api/api/program_exercise/?program=${int.parse(programId)}'),
         headers: {
           'Authorization': 'Token $_TOKEN',
           'Content-Type': 'application/json',
@@ -38,7 +40,7 @@ class GetDataMethods {
   Future<List<dynamic>> getProgramList() async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      final response = await http.get(Uri.parse('http://127.0.0.1:8888/api/api/dprogram'), headers: {
+      final response = await http.get(Uri.parse('$URL/api/api/dprogram'), headers: {
         'Authorization': 'Bearer $_TOKEN',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -59,9 +61,9 @@ class GetDataMethods {
   Future<List<dynamic>> getExcercises(String programId) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      logger.i('http://127.0.0.1:8888/api/api/program_exercise/program=${programId}');
+      logger.i('$URL/api/api/program_exercise/program=${programId}');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/?program=${programId}'),
+        Uri.parse('$URL/api/api/program_exercise/?program=${programId}'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -91,7 +93,7 @@ class DeleteDataMethods {
   Future<void> deleteProgramExById(int id) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      final url = Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/$id/');
+      final url = Uri.parse('$URL/api/api/program_exercise/$id/');
       logger.i(url);
       final response = await http.delete(
         url,
@@ -112,7 +114,7 @@ class DeleteDataMethods {
   Future<void> deleteProgramByName(int id) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      final url = Uri.parse('http://127.0.0.1:8888/api/api/dprogram/$id/');
+      final url = Uri.parse('$URL/api/api/dprogram/$id/');
       logger.i(url);
       final response = await http.delete(
         url,
@@ -139,7 +141,7 @@ class PostDataMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/'),
+        Uri.parse('$URL/api/api/program_exercise/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -162,7 +164,7 @@ class PostDataMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8888/api/api/dprogram/'),
+        Uri.parse('$URL/api/api/dprogram/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',

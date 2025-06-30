@@ -4,18 +4,20 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../core/config.dart';
+
 final logger = Logger();
 final _storage = FlutterSecureStorage();
 
 class ApiService {
 
-  final String _URL = 'http://127.0.0.1:8888/api/api/workout_result';
+  final String _URL = '$URL/api/api/workout_result';
 
   Future<int> postTraining(Map<String, dynamic> data) async {
     String? _TOKEN = await _storage.read(key: 'access');
     try {
       final response = await http.post(
-        Uri.parse('$_URL/'),
+        Uri.parse('$_URL'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -74,9 +76,9 @@ class GetExercises {
   Future<List<dynamic>> getExercises(int programId) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
-      // logger.i('http://127.0.0.1:8888/api/api/program_exercise/?program=${programId}');
+      // logger.i('$URLapi/api/program_exercise/?program=${programId}');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/api/api/program_exercise/?program=${programId}'),
+        Uri.parse('$URL/api/api/program_exercise/?program=${programId}'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Accept': 'application/json',

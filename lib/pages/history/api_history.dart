@@ -5,6 +5,8 @@ import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../core/config.dart';
+
 final logger = Logger();
 final _storage = FlutterSecureStorage();
 
@@ -12,13 +14,13 @@ final _storage = FlutterSecureStorage();
 class ApiServiceHistory {
 
 
-  final String _URL = 'http://127.0.0.1:8888/api/api/workout_result';
+  final String _URL = '$URL/api/api/workout_result';
 
   Future<List<dynamic>> getNameTraining(int user) async {
     String? _TOKEN = await _storage.read(key: 'access');
     try {
       final response = await http.get(
-        Uri.parse('$_URL/?user=$user'),
+        Uri.parse('$_URL?user=$user'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',

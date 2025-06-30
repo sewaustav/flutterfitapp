@@ -20,7 +20,6 @@ class FuturePracticeEditPage extends StatefulWidget {
 
 class _FuturePracticeEditPageState extends State<FuturePracticeEditPage> with TickerProviderStateMixin {
 
-  late PutMethod putMethod;
   late DeleteMethods deleteMethods;
   late GetMethods getMethods;
   late PostMethods postMethods;
@@ -58,7 +57,6 @@ class _FuturePracticeEditPageState extends State<FuturePracticeEditPage> with Ti
 
   Future<void> _init() async {
     getMethods = GetMethods();
-    putMethod = PutMethod();
     logger.i(widget.programId);
     final list = await getMethods.getExercices(widget.programId);
     setState(() {

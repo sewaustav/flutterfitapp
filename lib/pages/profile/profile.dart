@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutterfitapp/auth/extra_info/api_info.dart';
 import 'package:flutterfitapp/design/colors.dart';
 import 'package:flutterfitapp/pages/profile/api_profile.dart';
@@ -9,6 +10,7 @@ import 'package:flutterfitapp/design/images.dart';
 import 'package:logger/logger.dart';
 
 final logger = Logger();
+final _storage = FlutterSecureStorage();
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -205,19 +207,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
-                      firstDate: DateTime.now(), // Ограничиваем выбор от сегодняшнего дня
-                      lastDate: DateTime.now().add(Duration(days: 365 * 5)), // Максимум 5 лет в будущее
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(Duration(days: 365 * 5)),
                       builder: (context, child) {
                         return Theme(
                           data: Theme.of(context).copyWith(
                             colorScheme: ColorScheme.light(
-                              primary: Color(0xFF327AED), // Цвет заголовка и выбранной даты
-                              onPrimary: Colors.white, // Цвет текста на primary
-                              onSurface: Colors.black, // Цвет текста
+                              primary: Color(0xFF327AED),
+                              onPrimary: Colors.white,
+                              onSurface: Colors.black,
                             ),
                             textButtonTheme: TextButtonThemeData(
                               style: TextButton.styleFrom(
-                                foregroundColor: Color(0xFF327AED), // Цвет кнопок
+                                foregroundColor: Color(0xFF327AED),
                               ),
                             ),
                           ),
@@ -376,7 +378,7 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Profile',
           style: TextStyle(
             color: Colors.black,
@@ -401,14 +403,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     width: 120,
                     height: 120,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Color(0xFF8B7355),
                     ),
                     child: ClipOval(
                       child: Container(
                         padding: EdgeInsets.all(20),
-                        child: Icon(
+                        child: const Icon(
                           Icons.person,
                           size: 60,
                           color: Colors.white,
@@ -416,23 +418,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Name
                   Text(
                     '${profileInfo?['username']}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  TextButton(
+                      onPressed: () async {
+                        await _storage.delete(key: 'access');
+                        await _storage.delete(key: 'refresh');
+                        context.go('/login');
+                      },
+                      child: Text('logout')),
+                  const SizedBox(height: 4),
                   // Title
                 ],
               ),
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             Card(
               margin: EdgeInsets.symmetric(horizontal: 16),

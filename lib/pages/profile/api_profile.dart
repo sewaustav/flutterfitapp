@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+import '../../core/config.dart';
+
 final logger = Logger();
 final _storage = FlutterSecureStorage();
 
@@ -14,7 +16,7 @@ class ApiProfile {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/profile/'),
+        Uri.parse('$URL/accounts/api/profile/'),
           headers: {
             'Authorization': 'Bearer $_TOKEN',
             'Content-Type': 'application/json',
@@ -43,7 +45,7 @@ class Goals {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/'),
+        Uri.parse('$URL/accounts/api/user-goals/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -70,7 +72,7 @@ class Goals {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.put(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/$id/'),
+        Uri.parse('$URL/accounts/api/user-goals/$id/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -89,7 +91,7 @@ class Goals {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.delete(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/$id/'),
+        Uri.parse('$URL/accounts/api/user-goals/$id/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -111,7 +113,7 @@ class GetInfo {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-info/'),
+        Uri.parse('$URL/accounts/api/user-info/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -138,7 +140,7 @@ class GetInfo {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.put(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-info/'),
+        Uri.parse('$URL/accounts/api/user-info/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -160,7 +162,7 @@ class Practices {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/api/api/workout_result/'),
+        Uri.parse('$URL/api/api/workout_result/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',

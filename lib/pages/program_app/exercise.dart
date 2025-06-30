@@ -4,6 +4,7 @@ import 'package:flutterfitapp/design/colors.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../core/config.dart';
 import '../../design/images.dart';
 import 'exercise_model.dart';
 
@@ -19,7 +20,7 @@ class _ExercisePageState extends State<ExercisePage> {
   bool isLoading = true;
   late Box<Exercise> exerciseBox;
 
-  final String baseUrl = 'http://127.0.0.1:8888/api/api/exercise/';
+  final String baseUrl = '$URL/api/api/exercise/';
   final _storage = FlutterSecureStorage();
 
   @override

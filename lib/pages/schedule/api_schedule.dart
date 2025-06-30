@@ -4,18 +4,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+import '../../core/config.dart';
+
 final logger = Logger();
 final _storage = FlutterSecureStorage();
 
 class GetMethods {
 
-  final String _URL = 'http://127.0.0.1:8888/api/api';
-
   Future<List<dynamic>> getSchedule() async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('$_URL/schedule/'),
+        Uri.parse('$URL/api/api/schedule/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ class GetMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-          Uri.parse('$_URL/next_training'),
+          Uri.parse('$URL/api/api/next_training'),
           headers: {
             'Authorization': 'Bearer $_TOKEN',
             'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ class GetMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.get(
-        Uri.parse('$_URL/schedule_exercises/?workout=$programId'),
+        Uri.parse('$URL/api/api/schedule_exercises/?workout=$programId'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -95,13 +95,11 @@ class GetMethods {
 
 class PostMethods {
 
-  final String _URL = 'http://127.0.0.1:8888/api/api';
-
   Future<int> postNextTraining(Map<String, dynamic> data) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.post(
-        Uri.parse('$_URL/schedule/'),
+        Uri.parse('$URL/api/api/schedule/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -132,7 +130,7 @@ class PostMethods {
       String? _TOKEN = await _storage.read(key: 'access');
       for (final set in data) {
         final response = await http.post(
-            Uri.parse('${_URL}/schedule_exercises/'),
+            Uri.parse('$URL/api/api/schedule_exercises/'),
             headers: {
               'Authorization': 'Bearer $_TOKEN',
               'Content-Type': 'application/json',
@@ -155,13 +153,11 @@ class PostMethods {
 
 class DeleteMethods {
 
-  final String _URL = 'http://127.0.0.1:8888/api/api';
-
   Future<void> deleteFutureTraining(int id) async {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.delete(
-          Uri.parse('$_URL/schedule/$id/'),
+          Uri.parse('$URL/schedule/$id/'),
           headers: {
             'Authorization': 'Bearer $_TOKEN'
           }
@@ -181,7 +177,7 @@ class DeleteMethods {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.delete(
-        Uri.parse('$_URL/schedule_exercises/$id/'),
+        Uri.parse('$URL/schedule_exercises/$id/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN'
         }
@@ -202,32 +198,3 @@ class DeleteMethods {
 
 }
 
-class PutMethod {
-
-  Future<void> updateProgramExById(int id, Map<String, dynamic> data) async {
-    try {
-      String? _TOKEN = await _storage.read(key: 'access');
-      final url = Uri.parse('http://127.0.0.1:8888/api/api/schedule_exercises/$id/');
-      logger.i(url);
-      final response = await http.put(
-        url,
-        headers: {
-          'Authorization': 'Bearer $_TOKEN',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(data)
-
-      );
-
-      if (response.statusCode == 200) {
-        logger.i('Response status:success: ${response.statusCode}');
-      }
-      else {logger.i('Response status: ${response.statusCode} ${response.body}');}
-    }
-    catch (e) {
-      logger.i(e);
-    }
-  }
-
-}

@@ -15,6 +15,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+import 'core/config.dart';
+
 
 final logger = Logger();
 
@@ -83,7 +85,7 @@ class _HomePageState extends State<HomePage> {
   Future<bool> checkValidToken() async {
     String? access = await _storage.read(key: 'access');
     final response = await http.get(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/profile/'),
+        Uri.parse('$URL/accounts/api/profile/'),
         headers: {
           'Authorization': 'Bearer $access'
         }
@@ -102,20 +104,20 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchExercises() async {
     try {
       final response = await http.get(
-          Uri.parse('http://127.0.0.1:8888/api/api/exercise/'),
+          Uri.parse('$URL/api/api/exercise/'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           }
       );
-
+      logger.i('Exercises code: ${response.statusCode}');
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(utf8.decode(response.bodyBytes));
         await _updateLocalStorage(jsonData);
       }
       logger.i(response.statusCode);
     } catch (e) {
-      logger.i(e);
+      logger.i('Exercises $e');
     }
   }
 

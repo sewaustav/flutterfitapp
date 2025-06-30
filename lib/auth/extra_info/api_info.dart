@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:flutterfitapp/core/config.dart';
 
 final logger = Logger();
 final _storage = FlutterSecureStorage();
@@ -13,7 +14,7 @@ class ApiExtraInfo {
     try {
       String? _TOKEN = await _storage.read(key: 'access');
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/'),
+        Uri.parse('$URL/accounts/api/user-goals/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ class ApiExtraInfo {
       String? _TOKEN = await _storage.read(key: 'access');
 
       final getData = await http.get(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-info/'),
+        Uri.parse('$URL/accounts/api/user-info/'),
         headers: {
           'Authorization': 'Bearer $_TOKEN',
           'Accept': 'application/json',
@@ -43,7 +44,7 @@ class ApiExtraInfo {
       final List userInfoList = jsonDecode(getData.body);
       final int userInfoId = userInfoList[0]['id'];
       final response = await http.put(
-          Uri.parse('http://127.0.0.1:8888/accounts/api/user-info/$userInfoId/'),
+          Uri.parse('$URL/accounts/api/user-info/$userInfoId/'),
           headers: {
             'Authorization': 'Bearer $_TOKEN',
             'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ class ApiExtraInfo {
       String? _TOKEN = await _storage.read(key: 'access');
       logger.i(id);
       final response = await http.patch(
-        Uri.parse('http://127.0.0.1:8888/accounts/api/user-goals/$id/'),
+        Uri.parse('$URL/accounts/api/user-goals/$id/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_TOKEN'

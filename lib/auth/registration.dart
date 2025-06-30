@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../core/config.dart';
 import '../design/colors.dart';
 import 'api_auth.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -62,7 +63,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   Future<void> authGoogle() async {
-    final Uri url = Uri.parse('http://127.0.0.1:8888/accounts/api/google-auth/');
+    final Uri url = Uri.parse('$URL/accounts/api/google-auth/');
 
     if (!await launchUrl(
       url,
