@@ -7,6 +7,7 @@ import '../design/colors.dart';
 import 'api_auth.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html;
 
 final _storage = FlutterSecureStorage();
 
@@ -24,18 +25,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Future<void> login() async {
     try {
-      final uri = Uri.base;
-
-      if (uri.path == '/auth-google/') {
-        final access = uri.queryParameters['access_token'];
-        final refresh = uri.queryParameters['refresh_token'];
-
-        if (access != null && refresh != null) {
-          logger.i(access);
-          await _storage.write(key: 'access', value: access);
-          await _storage.write(key: 'refresh', value: refresh);
-        }
-      }
+      final url = '$URL/accounts/api/google-auth';  // адрес Django-авторизации
+      html.window.open(url, 'GoogleAuth', 'width=500,height=600');
     } catch(e) {
       null;
     }
@@ -45,7 +36,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void initState() {
     super.initState();
     userRegistration = UserRegistration();
-    login();
+    listenForAuthMessage();
   }
 
   final _usernameInput = TextEditingController();
@@ -63,18 +54,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   Future<void> authGoogle() async {
-    final Uri url = Uri.parse('$URL/accounts/api/google-auth/');
-
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.inAppWebView, // используем встроенный WebView
-      webViewConfiguration: const WebViewConfiguration(
-        enableJavaScript: true,
-      ),
-    )) {
-      throw 'Could not launch $url';
-    }
+    await login();
   }
+
+  void listenForAuthMessage() {
+    html.window.onMessage.listen((event) {
+      if (event.data != null && event.data is Map) {
+        final data = event.data as Map;
+
+        if (data['type'] == 'oauth-success') {
+          final token = data['token'];
+
+          // Здесь можно вызвать авторизацию в приложении
+          logger.i('OAuth token: $token');
+
+          // Пример: отправить токен на backend для верификации
+          // await yourAuthService.loginWithGoogle(token);
+
+          // Или навигация
+          // Navigator.pushReplacementNamed(context, '/home');
+        }
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
