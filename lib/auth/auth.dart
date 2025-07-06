@@ -1,8 +1,18 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import '../core/config.dart';
 import '../design/colors.dart';
 import 'api_auth.dart';
+import 'dart:html' as html;
+import 'package:uuid/uuid.dart';
+
+const uuid = Uuid();
+String sessionId = uuid.v4();
 
 final _storage = FlutterSecureStorage();
 
@@ -33,6 +43,58 @@ class _AuthPageState extends State<AuthPage> {
     super.initState();
     userRegistration = UserRegistration();
     login();
+  }
+
+  Future<void> loginGoogle(String sessionId) async {
+    try {
+      final url = '$URL/accounts/api/google-auth/?session_id=$sessionId';  // адрес Django-авторизации
+      html.window.open(url, 'GoogleAuth', 'width=500,height=600');
+    } catch(e) {
+      null;
+    }
+  }
+
+  Future<void> authGoogle() async {
+    const uuid = Uuid();
+    String sessionId = uuid.v4();
+    await loginGoogle(sessionId);
+    await checkAuthStatus(sessionId);
+  }
+
+
+  Future<void> checkAuthStatus(String sessionId) async {
+    final Uri url = Uri.parse('$URL/accounts/api/authstatus?session_id=$sessionId');
+
+    Timer.periodic(Duration(seconds: 3), (Timer timer) async {
+      try {
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final status = data['status'];
+
+          if (status == true) {
+            logger.i("Статус TRUE — запускаем событие");
+
+            final accessToken = data['access_token'];
+            final refreshToken = data['refresh_token'];
+
+            await _storage.write(key: 'access', value: accessToken);
+            await _storage.write(key: 'refresh', value: refreshToken);
+
+            timer.cancel();
+            context.push('/');
+
+          } else {
+            logger.i("Статус FALSE — продолжаем опрос...");
+          }
+        } else {
+          logger.i('Ошибка HTTP: ${response.statusCode}');
+        }
+      } catch (e) {
+        logger.i('Ошибка при запросе: $e');
+      }
+    });
   }
 
   Future<void> login() async {
@@ -260,6 +322,27 @@ class _AuthPageState extends State<AuthPage> {
 
 
                     const SizedBox(height: 14),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        authGoogle();
+                        // context.go('/auth-google');
+                      },
+                      icon: Icon(Icons.g_mobiledata, color: Colors.red, size: 24),
+                      label: Text(
+                        'Sign-in with Google',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        side: BorderSide(color: Colors.grey[300]!),
+                      ),
+                    ),
 
                     // Дополнительные ссылки (опционально)
                     TextButton(

@@ -33,7 +33,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Future<void> login(String sessionId) async {
     try {
-      final url = '$URL/accounts/api/google-auth/&session_id=$sessionId';  // адрес Django-авторизации
+      final url = '$URL/accounts/api/google-auth/?session_id=$sessionId';  // адрес Django-авторизации
       html.window.open(url, 'GoogleAuth', 'width=500,height=600');
     } catch(e) {
       null;
@@ -68,8 +68,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
 
-
-
   Future<void> checkAuthStatus(String sessionId) async {
     final Uri url = Uri.parse('$URL/accounts/api/authstatus?session_id=$sessionId');
 
@@ -97,7 +95,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             logger.i("Статус FALSE — продолжаем опрос...");
           }
         } else {
-          logger.i('Ошибка HTTP: ${response.statusCode}');
+          logger.i('Ошибка HTTP: ${response.statusCode} ');
         }
       } catch (e) {
         logger.i('Ошибка при запросе: $e');

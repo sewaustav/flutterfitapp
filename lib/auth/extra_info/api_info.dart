@@ -26,11 +26,12 @@ class ApiExtraInfo {
       logger.i(response.body);
     }
     catch (e) {
-      logger.i(e);
+      logger.i('Post user goal $e');
     }
   }
 
   Future<void> postExtraInfo(Map<String, dynamic> data) async {
+    logger.i(data);
     try {
       String? _TOKEN = await _storage.read(key: 'access');
 
@@ -42,20 +43,34 @@ class ApiExtraInfo {
         },
       );
       final List userInfoList = jsonDecode(getData.body);
-      final int userInfoId = userInfoList[0]['id'];
-      final response = await http.put(
-          Uri.parse('$URL/accounts/api/user-info/$userInfoId/'),
-          headers: {
-            'Authorization': 'Bearer $_TOKEN',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: jsonEncode(data)
-      );
-      logger.i('TRY${response.statusCode}');
+      if (userInfoList.isNotEmpty) {
+        final int userInfoId = userInfoList[0]['id'];
+        final response = await http.put(
+            Uri.parse('$URL/accounts/api/user-info/$userInfoId/'),
+            headers: {
+              'Authorization': 'Bearer $_TOKEN',
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode(data)
+        );
+        logger.i('TRY${response.statusCode}');
+      } else {
+        final response = await http.post(
+            Uri.parse('$URL/accounts/api/user-info/'),
+            headers: {
+              'Authorization': 'Bearer $_TOKEN',
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode(data)
+        );
+        logger.i('TRY${response.statusCode}');
+      }
+
     }
     catch (e) {
-      logger.i(e);
+      logger.i('Post Extra Info $e');
     }
   }
 
@@ -73,7 +88,7 @@ class ApiExtraInfo {
       );
       logger.i(response.statusCode);
     } catch (e) {
-      logger.i(e);
+      logger.i('EEE$e');
     }
   }
 
