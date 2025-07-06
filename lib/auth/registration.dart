@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import '../core/config.dart';
 import '../design/colors.dart';
@@ -8,6 +12,10 @@ import 'api_auth.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:html' as html;
+import 'package:uuid/uuid.dart';
+
+const uuid = Uuid();
+String sessionId = uuid.v4();
 
 final _storage = FlutterSecureStorage();
 
@@ -23,9 +31,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   late UserRegistration userRegistration;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<void> login() async {
+  Future<void> login(String sessionId) async {
     try {
-      final url = '$URL/accounts/api/google-auth';  // адрес Django-авторизации
+      final url = '$URL/accounts/api/google-auth/&session_id=$sessionId';  // адрес Django-авторизации
       html.window.open(url, 'GoogleAuth', 'width=500,height=600');
     } catch(e) {
       null;
@@ -36,7 +44,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void initState() {
     super.initState();
     userRegistration = UserRegistration();
-    listenForAuthMessage();
   }
 
   final _usernameInput = TextEditingController();
@@ -54,30 +61,49 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   Future<void> authGoogle() async {
-    await login();
+    const uuid = Uuid();
+    String sessionId = uuid.v4();
+    await login(sessionId);
+    await checkAuthStatus(sessionId);
   }
 
-  void listenForAuthMessage() {
-    html.window.onMessage.listen((event) {
-      if (event.data != null && event.data is Map) {
-        final data = event.data as Map;
 
-        if (data['type'] == 'oauth-success') {
-          final token = data['token'];
 
-          // Здесь можно вызвать авторизацию в приложении
-          logger.i('OAuth token: $token');
 
-          // Пример: отправить токен на backend для верификации
-          // await yourAuthService.loginWithGoogle(token);
+  Future<void> checkAuthStatus(String sessionId) async {
+    final Uri url = Uri.parse('$URL/accounts/api/authstatus?session_id=$sessionId');
 
-          // Или навигация
-          // Navigator.pushReplacementNamed(context, '/home');
+    Timer.periodic(Duration(seconds: 5), (Timer timer) async {
+      try {
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final status = data['status'];
+
+          if (status == true) {
+            logger.i("Статус TRUE — запускаем событие");
+
+            final accessToken = data['access_token'];
+            final refreshToken = data['refresh_token'];
+
+            await _storage.write(key: 'access', value: accessToken);
+            await _storage.write(key: 'refresh', value: refreshToken);
+
+            timer.cancel();
+            context.push('/add-info', extra: 1);
+
+          } else {
+            logger.i("Статус FALSE — продолжаем опрос...");
+          }
+        } else {
+          logger.i('Ошибка HTTP: ${response.statusCode}');
         }
+      } catch (e) {
+        logger.i('Ошибка при запросе: $e');
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
