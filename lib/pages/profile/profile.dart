@@ -73,6 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void createGoal() {
     context.go('/add-goal');
   }
+  
 
   Future<void> _showGoalManagementDialog(Map<String, dynamic> goalItem) async {
     selectedGoalId = goalItem['id']; // Store goal ID
